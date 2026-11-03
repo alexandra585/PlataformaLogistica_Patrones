@@ -1,0 +1,44 @@
+4. Caso empresarial: Plataforma de
+logística y seguimiento de envíos
+Una empresa de logística nacional dedicada al transporte de paquetes y documentos
+desea renovar su plataforma tecnológica para hacer frente al crecimiento de su
+operación. En los últimos años, el aumento del comercio electrónico ha generado una
+demanda mucho mayor de servicios de recojo, clasificación, distribución y entrega. Sin
+embargo, los sistemas actuales no permiten controlar adecuadamente los envíos en
+tiempo real, generan demoras en la actualización de estados y dificultan la atención de
+reclamos. La empresa necesita una solución moderna que acompañe su expansión.
+El negocio opera con distintos tipos de servicios: entrega express, envío estándar,
+mensajería programada, recojo en tienda y transporte interprovincial. Cada servicio
+tiene condiciones diferentes de tiempo, costo, prioridad, cobertura geográfica y
+tratamiento de incidencias. Por ejemplo, un paquete express debe seguir un flujo más
+rápido y con alertas inmediatas, mientras que un envío estándar puede pasar por más
+etapas de consolidación. La plataforma debe permitir manejar estas variantes sin
+duplicar lógica innecesariamente.
+Además, cada envío atraviesa múltiples estados durante su ciclo de vida: registrado,
+recogido, en tránsito, clasificado, en ruta, entregado, observado, reprogramado o
+devuelto. Estos estados pueden cambiar por distintos factores, como dirección
+incorrecta, ausencia del destinatario, problemas climáticos o incidentes operativos. Para
+el negocio es clave que cada cambio quede trazado y que tanto el cliente como el
+personal interno puedan conocer la situación exacta del envío. La confiabilidad de esta
+información impacta directamente en la confianza del mercado.
+La empresa también trabaja con una red de actores bastante amplia: agentes de
+ventanilla, operadores de almacén, supervisores de ruta, repartidores, clientes
+corporativos y destinatarios finales. Cada uno interactúa con el sistema desde una
+perspectiva distinta. Un cliente corporativo desea registrar grandes volúmenes de
+pedidos; el operador necesita clasificar paquetes; el repartidor requiere actualizar
+estados desde el móvil; y el destinatario espera notificaciones claras sobre la entrega. El
+sistema debe soportar estas interacciones de manera coordinada y consistente.
+Otro desafío empresarial es la integración con herramientas externas, como mapas de
+geolocalización, sistemas de firma digital, plataformas de comercio electrónico y
+servicios de notificación por correo o mensajería. La logística moderna depende
+fuertemente de estas conexiones, pero cada proveedor externo maneja interfaces y
+condiciones técnicas diferentes. La compañía necesita una arquitectura preparada para
+integrarse con múltiples servicios sin generar dependencia excesiva de uno solo. Esto es
+fundamental para mantener continuidad operativa y capacidad de adaptación.
+Finalmente, la empresa quiere usar los datos del sistema para tomar decisiones
+estratégicas, como optimizar rutas, identificar zonas con más incidencias, medir
+productividad de reparto y evaluar cumplimiento de tiempos prometidos. Es decir, no
+solo busca operar mejor, sino también convertir la información en ventaja competitiva.
+Este caso es ideal para un curso de diseño de patrones porque presenta una realidad
+empresarial con procesos dinámicos, múltiples estados, varios usuarios y fuerte
+necesidad de desacoplamiento tecnológico.

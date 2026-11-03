@@ -1,0 +1,264 @@
+
+##SECCION ocp_lsp
+Mismo envío de 4 kg cotizado con cada servicio (polimorfismo):
+  EXPRESS          admite=true  tarifa=S/  32.00  prioridad=1  etapas=4
+  ESTANDAR         admite=true  tarifa=S/  17.20  prioridad=3  etapas=6
+  PROGRAMADO       admite=true  tarifa=S/  20.80  prioridad=2  etapas=5
+  RECOJO_TIENDA    admite=true  tarifa=S/  10.80  prioridad=4  etapas=5
+  INTERPROVINCIAL  admite=true  tarifa=S/  35.00  prioridad=3  etapas=7
+
+##SECCION dip
+Controlador usando EnvioDaoMemoria sin modificar su código.
+Registrado: Envio[LR00000001 | ESTANDAR | - -> Jesús María | 2.00 kg | REGISTRADO]
+Total en repositorio: 1
+
+##SECCION singleton
+[AccesoDB] Configuración de conexión cargada (una sola vez).
+a.hashCode() = 2001049719
+b.hashCode() = 2001049719
+¿Misma instancia? true
+URL configurada: jdbc:mysql://localhost:3306/logistica?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=America/Lima
+Usuario en sesión (Singleton SesionUsuario): Rosa - AGENTE_VENTANILLA
+
+##SECCION factory
+  crearServicio(EXPRESS        ) -> ServicioExpress          flujo=[REGISTRADO, RECOGIDO, EN_RUTA, ENTREGADO]
+  crearServicio(ESTANDAR       ) -> ServicioEstandar         flujo=[REGISTRADO, RECOGIDO, EN_TRANSITO, CLASIFICADO, EN_RUTA, ENTREGADO]
+  crearServicio(PROGRAMADO     ) -> ServicioProgramado       flujo=[REGISTRADO, RECOGIDO, CLASIFICADO, EN_RUTA, ENTREGADO]
+  crearServicio(RECOJO_TIENDA  ) -> ServicioRecojoTienda     flujo=[REGISTRADO, RECOGIDO, EN_TRANSITO, CLASIFICADO, ENTREGADO]
+  crearServicio(INTERPROVINCIAL) -> ServicioInterprovincial  flujo=[REGISTRADO, RECOGIDO, CLASIFICADO, EN_TRANSITO, CLASIFICADO, EN_RUTA, ENTREGADO]
+
+##SECCION abstract_factory
+Familia: PRODUCCIÓN (nube)
+  Geolocalizador -> Google Maps (-12.01710, -77.06710)
+  Notificador    -> WHATSAPP
+   [WA-API] +51987654321 template=estado_envio body="LogiRuta - Prueba de canal"
+  Firma digital  -> Firma electrónica en la nube | código CLOUD-63845003
+Familia: CONTINGENCIA (proveedores alternos)
+  Geolocalizador -> OpenStreetMap (-12.06000, -77.04000)
+  Notificador    -> SMS
+   [SMS-GW] 987654321 <- "LogiRuta: Prueba de canal"
+  Firma digital  -> Firma local en dispositivo (sincroniza luego) | código LOCAL-15619
+
+##SECCION builder
+Construido: Envio[null | PROGRAMADO | Callao -> San Isidro | 1.20 kg | REGISTRADO]
+  seguro=true fragil=true fechaProgramada=2026-11-05
+Director (documentoExpress): Envio[null | EXPRESS | Callao -> Surco | 0.50 kg | REGISTRADO] firma=true
+Validación del Builder: Envío inválido: [La mensajería programada requiere fecha.]
+
+##SECCION prototype
+  Clon -> Envio[LR00000001 | ESTANDAR | Callao -> San Martín de Porres | 1.50 kg | REGISTRADO] para Ana Torres
+  Clon -> Envio[LR00000002 | ESTANDAR | Callao -> Breña | 1.50 kg | REGISTRADO] para Jorge Lima
+  Clon -> Envio[LR00000003 | ESTANDAR | Callao -> Miraflores | 1.50 kg | REGISTRADO] para Elena Vega
+Prototipo intacto: destino=- | ¿destino compartido con clon? false
+
+##SECCION adapter
+   [SMTP] from=notificaciones@logiruta.pe to=carla.romero@correo.pe subject="Envio LR00000007"
+  CORREO -> enviado=true
+   [SMS-GW] 912345678 <- "Envio LR00000007: Su paquete está EN_RUTA"
+  SMS -> enviado=true
+   [WA-API] +51912345678 template=estado_envio body="Envio LR00000007 - Su paquete está EN_RUTA"
+  WHATSAPP -> enviado=true
+   [CorreoAdapter] rechazo: 550 Invalid recipient
+  CORREO con destinatario inválido -> enviado=false
+
+##SECCION facade
+   [WA-API] +51976543210 template=estado_envio body="LogiRuta LR00000001 - Su envio fue registrado. Llegada estimada: 2026-10-28"
+Resultado: LR00000001 | Servicio EXPRESS (2.5 kg) + Seguro + Firma digital | S/ 39.25 | ETA 2026-10-28
+Destino geolocalizado: (-12.04150, -77.00150)
+
+##SECCION decorator
+  S/   19.00  <- Servicio ESTANDAR (5.0 kg)
+  S/   49.00  <- Servicio ESTANDAR (5.0 kg) + Seguro
+  S/   67.65  <- Servicio ESTANDAR (5.0 kg) + Seguro + Embalaje frágil + Firma digital + Rastreo GPS
+
+##SECCION composite
+Estructura de carga del vehículo:
+  + MANIFIESTO MF-2026-0458  (5 paquete(s), 58.3 kg)
+      + SACO SC-101  (2 paquete(s), 2.4 kg)
+          - Paquete LR00000011  1.2 kg  [CLASIFICADO]
+          - Paquete LR00000012  0.8 kg  [CLASIFICADO]
+      + PALETA PL-020  (2 paquete(s), 49.4 kg)
+          - Paquete LR00000014  35.0 kg  [CLASIFICADO]
+          + SACO SC-102  (1 paquete(s), 2.4 kg)
+              - Paquete LR00000013  2.0 kg  [CLASIFICADO]
+      - Paquete LR00000015  6.5 kg  [CLASIFICADO]
+Tras manifiesto.actualizarEstado(EN_RUTA):
+  + MANIFIESTO MF-2026-0458  (5 paquete(s), 58.3 kg)
+      + SACO SC-101  (2 paquete(s), 2.4 kg)
+          - Paquete LR00000011  1.2 kg  [EN_RUTA]
+          - Paquete LR00000012  0.8 kg  [EN_RUTA]
+      + PALETA PL-020  (2 paquete(s), 49.4 kg)
+          - Paquete LR00000014  35.0 kg  [EN_RUTA]
+          + SACO SC-102  (1 paquete(s), 2.4 kg)
+              - Paquete LR00000013  2.0 kg  [EN_RUTA]
+      - Paquete LR00000015  6.5 kg  [EN_RUTA]
+
+##SECCION proxy
+[AUDITORÍA] D0001 (DESTINATARIO) -> ACTUALIZAR->ENTREGADO sobre LR00000001 : DENEGADO
+   DENEGADO: El rol DESTINATARIO no puede modificar estados.
+[AUDITORÍA] E0011 (REPARTIDOR) -> ACTUALIZAR->EN_RUTA sobre LR00000001 : DENEGADO
+   DENEGADO: El envío LR00000001 no está asignado al repartidor E0011
+[AUDITORÍA] E0010 (REPARTIDOR) -> ACTUALIZAR->EN_RUTA sobre LR00000001 : PERMITIDO
+   OK: Repartidor asignado actualizó a EN_RUTA
+Consulta de tracking (2 veces):
+[AUDITORÍA] E0010 (REPARTIDOR) -> CONSULTA sobre LR00000001 : PERMITIDO
+   (consulta a la base de datos: historial de LR00000001)
+[AUDITORÍA] E0010 (REPARTIDOR) -> CONSULTA sobre LR00000001 : PERMITIDO
+   (respuesta desde caché del proxy)
+   EN_RUTA      | Barranco               | Actualización desde app móvil
+
+##SECCION bridge
+==== INCIDENCIAS POR ZONA ====
+Zona                Incidencias         % del total         
+------------------------------------------------------------
+Lima Norte          3                   60.0 %              
+Lima Sur            1                   20.0 %              
+Sierra Central      1                   20.0 %              
+# Incidencias por zona
+Zona;Incidencias;% del total
+Lima Norte;3;60.0 %
+Lima Sur;1;20.0 %
+Sierra Central;1;20.0 %
+==== CUMPLIMIENTO DE TIEMPOS ====
+Servicio            Entregados          A tiempo            Cumplimiento        
+--------------------------------------------------------------------------------
+EXPRESS             420                 401                 95.5 %              
+ESTANDAR            1310                1189                90.8 %              
+INTERPROVINCIAL     275                 236                 85.8 %              
+PDF generado con plantilla cumplimiento_de_tiempos.jasper (3 filas)
+
+##SECCION observer
+Observadores suscritos:
+   - Persistencia del envío
+   - Historial de seguimiento
+   - Notificación al destinatario (WHATSAPP)
+   - Alertas a supervisores
+   - Indicadores en tiempo real
+   - Pantalla
+Un solo cambio de estado (RECOGER) en LR00000001:
+   [WA-API] +51934555666 template=estado_envio body="LogiRuta LR00000001 - Recogimos su paquete."
+   [Pantalla de seguimiento] LR00000001: REGISTRADO -> RECOGIDO
+Despachar y registrar incidencia (express):
+   [WA-API] +51934555666 template=estado_envio body="LogiRuta LR00000001 - Su paquete está en ruta y llegará hoy."
+   [Pantalla de seguimiento] LR00000001: RECOGIDO -> EN_RUTA
+   [WA-API] +51934555666 template=estado_envio body="LogiRuta LR00000001 - No pudimos entregar su paquete (intento 1). Lo contactaremos para coordinar."
+   [Pantalla de seguimiento] LR00000001: EN_RUTA -> OBSERVADO
+Historial registrado por HistorialSeguimientoObserver:
+   RECOGIDO     | Agencia Central Lima   | Paquete recogido
+   EN_RUTA      | Surco                  | Salida a reparto
+   OBSERVADO    | Surco                  | AUSENCIA_DESTINATARIO: Nadie en domicilio
+Alertas generadas por AlertaSupervisorObserver: [[CRITICA] LR00000001 - Envío EXPRESS observado: riesgo de incumplir 24 h. AUSENCIA_DESTINATARIO: Nadie en domicilio]
+Indicadores: Sesión: 0 entregados | 1 en ruta | 1 observados | 0 devueltos | 0 reversiones
+Se desuscribe la pantalla y se reprograma (la pantalla ya no imprime):
+   [WA-API] +51934555666 template=estado_envio body="LogiRuta LR00000001 - Entrega reprogramada para el 2026-10-28."
+Estado final: REPROGRAMADO (paso 2, intentos 1)
+
+##SECCION state
+Recorrido de un envío ESTÁNDAR con firma digital (LR00000001):
+   REGISTRADO   permite [RECOGER]                                     -> RECOGER
+   [WA-API] +51987111222 template=estado_envio body="LogiRuta LR00000001 - Recogimos su paquete."
+   RECOGIDO     permite [TRASLADAR]                                   -> TRASLADAR
+   EN_TRANSITO  permite [CLASIFICAR]                                  -> CLASIFICAR
+   CLASIFICADO  permite [DESPACHAR]                                   -> DESPACHAR
+   [WA-API] +51987111222 template=estado_envio body="LogiRuta LR00000001 - Su paquete está en ruta y llegará hoy."
+   EN_RUTA sin firma -> ENTREGAR: RECHAZADO -> El envío LR00000001 requiere firma digital del receptor antes de marcarse ENTREGADO.
+   [WA-API] +51987111222 template=estado_envio body="LogiRuta LR00000001 - Su paquete fue entregado. ¡Gracias por confiar en LogiRuta!"
+   Con firma -> ENTREGADO (paso 5, intentos 0) firma=CLOUD-63845003
+   Acciones en ENTREGADO: []
+   [WA-API] +51934111222 template=estado_envio body="LogiRuta LR00000002 - Recogimos su paquete."
+   [WA-API] +51934333444 template=estado_envio body="LogiRuta LR00000003 - Recogimos su paquete."
+Mismo estado RECOGIDO, distinto servicio:
+   EXPRESS  permite [DESPACHAR]
+   ESTANDAR permite [TRASLADAR]
+   ESTANDAR RECOGIDO -> DESPACHAR: RECHAZADO -> El servicio ESTANDAR no pasa de RECOGIDO a EN_RUTA. Flujo: [REGISTRADO, RECOGIDO, EN_TRANSITO, CLASIFICADO, EN_RUTA, ENTREGADO]
+Tres intentos fallidos de entrega (LR00000002):
+   [WA-API] +51934111222 template=estado_envio body="LogiRuta LR00000002 - Su paquete está en ruta y llegará hoy."
+   [WA-API] +51934111222 template=estado_envio body="LogiRuta LR00000002 - No pudimos entregar su paquete (intento 1). Lo contactaremos para coordinar."
+   Incidencia 1 -> OBSERVADO (paso 2, intentos 1) permite [REPROGRAMAR, DEVOLVER]
+   [WA-API] +51934111222 template=estado_envio body="LogiRuta LR00000002 - Entrega reprogramada para el 2026-10-28."
+   [WA-API] +51934111222 template=estado_envio body="LogiRuta LR00000002 - Su paquete está en ruta y llegará hoy."
+   [WA-API] +51934111222 template=estado_envio body="LogiRuta LR00000002 - No pudimos entregar su paquete (intento 2). Lo contactaremos para coordinar."
+   Incidencia 2 -> OBSERVADO (paso 2, intentos 2) permite [REPROGRAMAR, DEVOLVER]
+   [WA-API] +51934111222 template=estado_envio body="LogiRuta LR00000002 - Entrega reprogramada para el 2026-10-29."
+   [WA-API] +51934111222 template=estado_envio body="LogiRuta LR00000002 - Su paquete está en ruta y llegará hoy."
+   [WA-API] +51934111222 template=estado_envio body="LogiRuta LR00000002 - No pudimos entregar su paquete (intento 3). Lo contactaremos para coordinar."
+   Incidencia 3 -> OBSERVADO (paso 2, intentos 3) permite [DEVOLVER]
+   Reprogramar por 4.ª vez: RECHAZADO -> El envío ya tuvo 3 intentos fallidos: debe devolverse al remitente.
+   [WA-API] +51934111222 template=estado_envio body="LogiRuta LR00000002 - Su paquete fue devuelto al remitente."
+   Final -> DEVUELTO (paso 2, intentos 3)
+
+##SECCION command
+   [WA-API] +51945678123 template=estado_envio body="LogiRuta LR00000001 - Recogimos su paquete."
+Ejecutados 3 comandos -> CLASIFICADO (paso 3, intentos 0)
+Pila de deshacer: [Clasificar LR00000001 en Almacén Callao, Trasladar LR00000001 en Almacén Callao, Recoger LR00000001 en Almacén Callao]
+   [WA-API] +51945678123 template=estado_envio body="LogiRuta LR00000001 - Corregimos el estado de su envío: EN_TRANSITO"
+Deshacer: Clasificar LR00000001 en Almacén Callao -> EN_TRANSITO (paso 2, intentos 0)
+   [WA-API] +51945678123 template=estado_envio body="LogiRuta LR00000001 - Corregimos el estado de su envío: RECOGIDO"
+Deshacer: Trasladar LR00000001 en Almacén Callao -> RECOGIDO (paso 1, intentos 0)
+Rehacer:  Trasladar LR00000001 en Almacén Callao -> EN_TRANSITO (paso 2, intentos 0)
+Historial (inmutable, incluye reversiones):
+   RECOGIDO     | Almacén Callao         | Recojo
+   EN_TRANSITO  | Almacén Callao         | Traslado
+   CLASIFICADO  | Almacén Callao         | Zona Lima Norte
+   EN_TRANSITO  | Sistema                | REVERSIÓN: deshacer "Clasificar LR00000001 en Almacén Callao"
+   RECOGIDO     | Sistema                | REVERSIÓN: deshacer "Trasladar LR00000001 en Almacén Callao"
+   EN_TRANSITO  | Almacén Callao         | Traslado
+Modo sin conexión (repartidor sin señal): se encolan 2 comandos
+   Pendientes: 2 | estado aún EN_TRANSITO (paso 2, intentos 0)
+   [WA-API] +51945678123 template=estado_envio body="LogiRuta LR00000001 - Su paquete está en ruta y llegará hoy."
+   OK    Clasificar LR00000001 en Almacén
+   OK    Despachar LR00000001 en Comas
+   Tras sincronizar -> EN_RUTA (paso 4, intentos 0)
+Macro-comando: despachar manifiesto de 3 envíos (uno inválido):
+   [WA-API] +51999888777 template=estado_envio body="LogiRuta LR00000002 - Recogimos su paquete."
+   [WA-API] +51999888777 template=estado_envio body="LogiRuta LR00000003 - Recogimos su paquete."
+   [WA-API] +51999888777 template=estado_envio body="LogiRuta LR00000002 - Su paquete está en ruta y llegará hoy."
+   [WA-API] +51999888777 template=estado_envio body="LogiRuta LR00000003 - Su paquete está en ruta y llegará hoy."
+   [WA-API] +51999888777 template=estado_envio body="LogiRuta LR00000003 - Corregimos el estado de su envío: CLASIFICADO"
+   [WA-API] +51999888777 template=estado_envio body="LogiRuta LR00000002 - Corregimos el estado de su envío: CLASIFICADO"
+   ejecutar macro: RECHAZADO -> Macro "Despachar MF-2026-0460" cancelada en LR00000004: Acción "Despachar" no permitida: el envío está REGISTRADO.
+   LR00000002 -> CLASIFICADO (paso 3, intentos 0) | LR00000003 -> CLASIFICADO (paso 3, intentos 0) | LR00000004 -> REGISTRADO (paso 0, intentos 0)
+   [WA-API] +51999888777 template=estado_envio body="LogiRuta LR00000002 - Su paquete está en ruta y llegará hoy."
+   [WA-API] +51999888777 template=estado_envio body="LogiRuta LR00000003 - Su paquete está en ruta y llegará hoy."
+   Macro válida -> EN_RUTA (paso 4, intentos 0) | EN_RUTA (paso 4, intentos 0)
+   [WA-API] +51999888777 template=estado_envio body="LogiRuta LR00000003 - Corregimos el estado de su envío: CLASIFICADO"
+   [WA-API] +51999888777 template=estado_envio body="LogiRuta LR00000002 - Corregimos el estado de su envío: CLASIFICADO"
+   Deshacer macro -> CLASIFICADO (paso 3, intentos 0) | CLASIFICADO (paso 3, intentos 0)
+
+##SECCION memento
+   [WA-API] +51999888777 template=estado_envio body="LogiRuta LR00000001 - Recogimos su paquete."
+   [WA-API] +51999888777 template=estado_envio body="LogiRuta LR00000001 - Su paquete está en ruta y llegará hoy."
+   [WA-API] +51999888777 template=estado_envio body="LogiRuta LR00000001 - No pudimos entregar su paquete (intento 1). Lo contactaremos para coordinar."
+Estado actual: OBSERVADO (paso 4, intentos 1)
+Caretaker guarda: 19:10:22 | Antes de reprogramar | volver a OBSERVADO
+   [WA-API] +51999888777 template=estado_envio body="LogiRuta LR00000001 - Entrega reprogramada para el 2026-10-29."
+Tras reprogramar: REPROGRAMADO (paso 4, intentos 1) fechaProgramada=2026-10-29
+El cliente cancela la reprogramación -> restaurar último memento
+   [WA-API] +51999888777 template=estado_envio body="LogiRuta LR00000001 - Corregimos el estado de su envío: OBSERVADO"
+Restaurado: OBSERVADO (paso 4, intentos 1) fechaProgramada=null
+Deshacer una entrega con firma a través del Proxy:
+   [WA-API] +51999888777 template=estado_envio body="LogiRuta LR00000002 - Recogimos su paquete."
+   [WA-API] +51999888777 template=estado_envio body="LogiRuta LR00000002 - Su paquete está en ruta y llegará hoy."
+[AUDITORÍA] E0010 (REPARTIDOR) -> ENTREGAR sobre LR00000002 : PERMITIDO
+   [WA-API] +51999888777 template=estado_envio body="LogiRuta LR00000002 - Su paquete fue entregado. ¡Gracias por confiar en LogiRuta!"
+   Repartidor entrega -> ENTREGADO (paso 5, intentos 0)
+[AUDITORÍA] E0010 (REPARTIDOR) -> RESTAURAR(ENTREGADO) sobre LR00000002 : DENEGADO
+   Repartidor intenta deshacer: RECHAZADO -> Solo un supervisor puede revertir una entrega confirmada.
+[AUDITORÍA] E0004 (SUPERVISOR_RUTA) -> RESTAURAR sobre LR00000002 : PERMITIDO
+   [WA-API] +51999888777 template=estado_envio body="LogiRuta LR00000002 - Corregimos el estado de su envío: EN_RUTA"
+   Supervisor deshace -> EN_RUTA (paso 4, intentos 0)
+   Último registro del historial: EN_RUTA      | Sistema                | REVERSIÓN: deshacer "Entregar LR00000002 en Barranco"
+
+##SECCION estado_laboral
+mostrarEstado(): Iván Cárdenas está ACTIVO: puede operar y recibir envíos asignados.
+Acciones permitidas: [VACACIONES, CESAR]
+Enviar de vacaciones:
+   [RR.HH.] E0010: ACTIVO -> VACACIONES (Vacaciones programadas)
+   [Operaciones] 2 envío(s) por reasignar de E0010: [LR00000004, LR00000005]
+   Iván Cárdenas está DE VACACIONES: sin acceso al sistema ni asignación de envíos.
+   ¿Puede iniciar sesión? false | ¿Puede recibir envíos? false
+   Alertas de Operaciones: [[ALTA] LR00000004 - Reasignar: el repartidor Iván Cárdenas pasó a VACACIONES., [ALTA] LR00000005 - Reasignar: el repartidor Iván Cárdenas pasó a VACACIONES.]
+Cesar estando de vacaciones: RECHAZADO -> No se puede cesar: el empleado está VACACIONES.
+Reincorporar:
+   [RR.HH.] E0010: VACACIONES -> ACTIVO (Fin de vacaciones)
+   Iván Cárdenas está ACTIVO: puede operar y recibir envíos asignados.
