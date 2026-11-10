@@ -14,8 +14,8 @@ Total en repositorio: 1
 
 ##SECCION singleton
 [AccesoDB] Configuración de conexión cargada (una sola vez).
-a.hashCode() = 2001049719
-b.hashCode() = 2001049719
+a.hashCode() = 1324119927
+b.hashCode() = 1324119927
 ¿Misma instancia? true
 URL configurada: jdbc:mysql://localhost:3306/logistica?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=America/Lima
 Usuario en sesión (Singleton SesionUsuario): Rosa - AGENTE_VENTANILLA
@@ -62,8 +62,8 @@ Prototipo intacto: destino=- | ¿destino compartido con clon? false
   CORREO con destinatario inválido -> enviado=false
 
 ##SECCION facade
-   [WA-API] +51976543210 template=estado_envio body="LogiRuta LR00000001 - Su envio fue registrado. Llegada estimada: 2026-10-28"
-Resultado: LR00000001 | Servicio EXPRESS (2.5 kg) + Seguro + Firma digital | S/ 39.25 | ETA 2026-10-28
+   [WA-API] +51976543210 template=estado_envio body="LogiRuta LR00000001 - Su envio fue registrado. Llegada estimada: 2026-11-10"
+Resultado: LR00000001 | Servicio EXPRESS (2.5 kg) + Seguro + Firma digital | S/ 39.25 | ETA 2026-11-10
 Destino geolocalizado: (-12.04150, -77.00150)
 
 ##SECCION decorator
@@ -108,24 +108,9 @@ Consulta de tracking (2 veces):
    EN_RUTA      | Barranco               | Actualización desde app móvil
 
 ##SECCION bridge
-==== INCIDENCIAS POR ZONA ====
-Zona                Incidencias         % del total         
-------------------------------------------------------------
-Lima Norte          3                   60.0 %              
-Lima Sur            1                   20.0 %              
-Sierra Central      1                   20.0 %              
-# Incidencias por zona
-Zona;Incidencias;% del total
-Lima Norte;3;60.0 %
-Lima Sur;1;20.0 %
-Sierra Central;1;20.0 %
-==== CUMPLIMIENTO DE TIEMPOS ====
-Servicio            Entregados          A tiempo            Cumplimiento        
---------------------------------------------------------------------------------
-EXPRESS             420                 401                 95.5 %              
-ESTANDAR            1310                1189                90.8 %              
-INTERPROVINCIAL     275                 236                 85.8 %              
-PDF generado con plantilla cumplimiento_de_tiempos.jasper (3 filas)
+   PDF generado (1 pág.): salida_reportes/incidencias_zona.pdf
+   Salida de prueba: 'Incidencias por zona' con 1 página(s)
+   PDF generado (1 pág.): salida_reportes/cumplimiento_tiempos.pdf
 
 ##SECCION observer
 Observadores suscritos:
@@ -150,7 +135,7 @@ Historial registrado por HistorialSeguimientoObserver:
 Alertas generadas por AlertaSupervisorObserver: [[CRITICA] LR00000001 - Envío EXPRESS observado: riesgo de incumplir 24 h. AUSENCIA_DESTINATARIO: Nadie en domicilio]
 Indicadores: Sesión: 0 entregados | 1 en ruta | 1 observados | 0 devueltos | 0 reversiones
 Se desuscribe la pantalla y se reprograma (la pantalla ya no imprime):
-   [WA-API] +51934555666 template=estado_envio body="LogiRuta LR00000001 - Entrega reprogramada para el 2026-10-28."
+   [WA-API] +51934555666 template=estado_envio body="LogiRuta LR00000001 - Entrega reprogramada para el 2026-11-10."
 Estado final: REPROGRAMADO (paso 2, intentos 1)
 
 ##SECCION state
@@ -175,11 +160,11 @@ Tres intentos fallidos de entrega (LR00000002):
    [WA-API] +51934111222 template=estado_envio body="LogiRuta LR00000002 - Su paquete está en ruta y llegará hoy."
    [WA-API] +51934111222 template=estado_envio body="LogiRuta LR00000002 - No pudimos entregar su paquete (intento 1). Lo contactaremos para coordinar."
    Incidencia 1 -> OBSERVADO (paso 2, intentos 1) permite [REPROGRAMAR, DEVOLVER]
-   [WA-API] +51934111222 template=estado_envio body="LogiRuta LR00000002 - Entrega reprogramada para el 2026-10-28."
+   [WA-API] +51934111222 template=estado_envio body="LogiRuta LR00000002 - Entrega reprogramada para el 2026-11-10."
    [WA-API] +51934111222 template=estado_envio body="LogiRuta LR00000002 - Su paquete está en ruta y llegará hoy."
    [WA-API] +51934111222 template=estado_envio body="LogiRuta LR00000002 - No pudimos entregar su paquete (intento 2). Lo contactaremos para coordinar."
    Incidencia 2 -> OBSERVADO (paso 2, intentos 2) permite [REPROGRAMAR, DEVOLVER]
-   [WA-API] +51934111222 template=estado_envio body="LogiRuta LR00000002 - Entrega reprogramada para el 2026-10-29."
+   [WA-API] +51934111222 template=estado_envio body="LogiRuta LR00000002 - Entrega reprogramada para el 2026-11-11."
    [WA-API] +51934111222 template=estado_envio body="LogiRuta LR00000002 - Su paquete está en ruta y llegará hoy."
    [WA-API] +51934111222 template=estado_envio body="LogiRuta LR00000002 - No pudimos entregar su paquete (intento 3). Lo contactaremos para coordinar."
    Incidencia 3 -> OBSERVADO (paso 2, intentos 3) permite [DEVOLVER]
@@ -230,9 +215,9 @@ Macro-comando: despachar manifiesto de 3 envíos (uno inválido):
    [WA-API] +51999888777 template=estado_envio body="LogiRuta LR00000001 - Su paquete está en ruta y llegará hoy."
    [WA-API] +51999888777 template=estado_envio body="LogiRuta LR00000001 - No pudimos entregar su paquete (intento 1). Lo contactaremos para coordinar."
 Estado actual: OBSERVADO (paso 4, intentos 1)
-Caretaker guarda: 19:10:22 | Antes de reprogramar | volver a OBSERVADO
-   [WA-API] +51999888777 template=estado_envio body="LogiRuta LR00000001 - Entrega reprogramada para el 2026-10-29."
-Tras reprogramar: REPROGRAMADO (paso 4, intentos 1) fechaProgramada=2026-10-29
+Caretaker guarda: 18:24:23 | Antes de reprogramar | volver a OBSERVADO
+   [WA-API] +51999888777 template=estado_envio body="LogiRuta LR00000001 - Entrega reprogramada para el 2026-11-11."
+Tras reprogramar: REPROGRAMADO (paso 4, intentos 1) fechaProgramada=2026-11-11
 El cliente cancela la reprogramación -> restaurar último memento
    [WA-API] +51999888777 template=estado_envio body="LogiRuta LR00000001 - Corregimos el estado de su envío: OBSERVADO"
 Restaurado: OBSERVADO (paso 4, intentos 1) fechaProgramada=null
@@ -262,3 +247,39 @@ Cesar estando de vacaciones: RECHAZADO -> No se puede cesar: el empleado está V
 Reincorporar:
    [RR.HH.] E0010: VACACIONES -> ACTIVO (Fin de vacaciones)
    Iván Cárdenas está ACTIVO: puede operar y recibir envíos asignados.
+
+##SECCION sesion13_command_memento
+-- Command (ejemplo de clase) --
+   Empleado: E0099 - Roy Saavedra | Área: ALMACEN | Sueldo: S/ 3000.00
+   Bono calculado (10 %): S/ 300.00
+   Sueldo final: S/ 3300.00
+-- Ejercicio resuelto: AumentarSueldoCommand --
+   Sueldo aumentado 10.0 %: S/ 3000.00 -> S/ 3300.00
+   Sueldo final: S/ 3630.00
+   Aumento de -5 %: RECHAZADO -> El porcentaje de aumento debe estar entre 0 y 100.
+-- Memento (guardar y restaurar) --
+   Área cambiada: ALMACEN -> SUPERVISION
+   Sueldo aumentado 20.0 %: S/ 3300.00 -> S/ 3960.00
+   Actual: Empleado: E0099 - Roy Saavedra | Área: SUPERVISION | Sueldo: S/ 3960.00
+   Puntos guardados por el Caretaker: 4
+   Deshacer 1 -> Empleado: E0099 - Roy Saavedra | Área: SUPERVISION | Sueldo: S/ 3300.00
+   Deshacer 2 -> Empleado: E0099 - Roy Saavedra | Área: ALMACEN | Sueldo: S/ 3300.00
+   Deshacer 3 -> Empleado: E0099 - Roy Saavedra | Área: ALMACEN | Sueldo: S/ 3300.00
+   Deshacer 4 -> Empleado: E0099 - Roy Saavedra | Área: ALMACEN | Sueldo: S/ 3000.00
+   Sin más estados: true
+-- Bitácora del Invoker --
+   18:24:23  [Mostrar datos]  Empleado: E0099 - Roy Saavedra | Área: ALMACEN | Sueldo: S/ 3000.00
+   18:24:23  [Calcular bono]  Bono calculado (10 %): S/ 300.00
+   18:24:23  [Calcular sueldo final]  Sueldo final: S/ 3300.00
+   18:24:23  [Aumentar sueldo 10.0 %]  Sueldo aumentado 10.0 %: S/ 3000.00 -> S/ 3300.00
+   18:24:23  [Calcular sueldo final]  Sueldo final: S/ 3630.00
+   18:24:23  [Cambiar área a Supervision]  Área cambiada: ALMACEN -> SUPERVISION
+   18:24:23  [Aumentar sueldo 20.0 %]  Sueldo aumentado 20.0 %: S/ 3300.00 -> S/ 3960.00
+-- Registros enviados a la BD (historial_remuneracion) --
+   E0099 AUMENTO -> S/ 3300.00, ALMACEN
+   E0099 CAMBIO_AREA -> S/ 3300.00, SUPERVISION
+   E0099 AUMENTO -> S/ 3960.00, SUPERVISION
+   E0099 RESTAURACION -> S/ 3300.00, SUPERVISION
+   E0099 RESTAURACION -> S/ 3300.00, ALMACEN
+   E0099 RESTAURACION -> S/ 3300.00, ALMACEN
+   E0099 RESTAURACION -> S/ 3000.00, ALMACEN

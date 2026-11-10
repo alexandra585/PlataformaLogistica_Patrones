@@ -1,6 +1,7 @@
 build/
 dist/
 nbproject/private/
+salida_reportes/
 *.class
 .DS_Store
 Thumbs.db

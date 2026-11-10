@@ -1,0 +1,287 @@
+@startuml base_datos
+hide circle
+skinparam linetype ortho
+skinparam defaultFontSize 11
+skinparam class {
+  BackgroundColor #F3F7FB
+  BorderColor #1F4E79
+}
+title Base de datos "logistica" (MySQL 8) - AppLogistica
+
+entity control {
+  * parametro : VARCHAR(30) <<PK>>
+  --
+  valor : INT
+}
+entity sucursales {
+  * idsucursal : CHAR(4) <<PK>>
+  --
+  nombre : VARCHAR(100)
+  tipo : ENUM
+  direccion : VARCHAR(180)
+  departamento : VARCHAR(60)
+  activo : TINYINT(1)
+}
+entity zonas {
+  * idzona : INT <<PK>>
+  --
+  nombre : VARCHAR(80)
+  idsucursal : CHAR(4) <<FK>>
+}
+entity empleados {
+  * idempleado : CHAR(5) <<PK>>
+  --
+  nombre : VARCHAR(80)
+  apellidos : VARCHAR(100)
+  email : VARCHAR(120)
+  usuario : VARCHAR(50)
+  clave : CHAR(64)
+  rol : ENUM
+  idsucursal : CHAR(4) <<FK>>
+  activo : TINYINT(1)
+  estado_laboral : ENUM
+  sueldo : DECIMAL(10,2)
+  area : VARCHAR(40)
+}
+entity clientes {
+  * idcliente : CHAR(5) <<PK>>
+  --
+  razonsocial : VARCHAR(150)
+  tipocliente : ENUM
+  nrodocumento : VARCHAR(11)
+  email : VARCHAR(120)
+  telefono : VARCHAR(20)
+  usuario_portal : VARCHAR(50)
+  fecha_registro : DATETIME
+}
+entity vehiculos {
+  * placa : CHAR(7) <<PK>>
+  --
+  tipo : ENUM
+  capacidad_kg : DECIMAL(10,2)
+  activo : TINYINT(1)
+}
+entity rutas {
+  * idruta : INT <<PK>>
+  --
+  fecha : DATE
+  idzona : INT <<FK>>
+  placa : CHAR(7) <<FK>>
+  idsupervisor : CHAR(5) <<FK>>
+}
+entity tipos_servicio {
+  * idservicio : VARCHAR(20) <<PK>>
+  --
+  descripcion : VARCHAR(100)
+  cargo_fijo : DECIMAL(10,2)
+  costo_kg : DECIMAL(10,2)
+  dias_entrega : INT
+  prioridad : INT
+  peso_maximo : DECIMAL(10,2)
+}
+entity servicios_adicionales {
+  * idadicional : VARCHAR(20) <<PK>>
+  --
+  descripcion : VARCHAR(100)
+  tipo_calculo : ENUM
+  valor : DECIMAL(10,4)
+}
+entity direcciones {
+  * iddireccion : INT <<PK>>
+  --
+  calle : VARCHAR(180)
+  distrito : VARCHAR(80)
+  provincia : VARCHAR(80)
+  departamento : VARCHAR(80)
+  latitud : DECIMAL(9,6)
+  longitud : DECIMAL(9,6)
+}
+entity envios {
+  * codigo : CHAR(10) <<PK>>
+  --
+  idcliente : CHAR(5) <<FK>>
+  idservicio : VARCHAR(20) <<FK>>
+  iddir_origen : INT <<FK>>
+  iddir_destino : INT <<FK>>
+  idzona_destino : INT <<FK>>
+  nombre_dest : VARCHAR(120)
+  telefono_dest : VARCHAR(20)
+  email_dest : VARCHAR(120)
+  peso_kg : DECIMAL(10,2)
+  valor_declarado : DECIMAL(12,2)
+  fragil : TINYINT(1)
+  con_seguro : TINYINT(1)
+  requiere_firma : TINYINT(1)
+  fecha_programada : DATE
+  idsucursal_recojo : CHAR(4) <<FK>>
+  estado : ENUM
+  paso_flujo : TINYINT
+  intentos : TINYINT
+  costo : DECIMAL(12,2)
+  fecha_registro : DATETIME
+  fecha_estimada : DATE
+  fecha_entrega : DATETIME
+  codigo_firma : VARCHAR(40)
+}
+entity envio_adicionales {
+  * codigo : CHAR(10) <<PK,FK>>
+  * idadicional : VARCHAR(20) <<PK,FK>>
+  --
+  monto : DECIMAL(10,2)
+}
+entity unidades_carga {
+  * idunidad : VARCHAR(15) <<PK>>
+  --
+  tipo : ENUM
+  tara_kg : DECIMAL(10,2)
+  idpadre : VARCHAR(15) <<FK>>
+  idruta : INT <<FK>>
+}
+entity unidad_detalle {
+  * idunidad : VARCHAR(15) <<PK,FK>>
+  * codigo : CHAR(10) <<PK,FK>>
+  --
+}
+entity asignaciones {
+  * codigo : CHAR(10) <<PK,FK>>
+  * idruta : INT <<PK,FK>>
+  --
+  idrepartidor : CHAR(5) <<FK>>
+  fecha_asignacion : DATETIME
+}
+entity seguimientos {
+  * idseguimiento : BIGINT <<PK>>
+  --
+  codigo : CHAR(10) <<FK>>
+  estado : VARCHAR(15)
+  ubicacion : VARCHAR(120)
+  observacion : VARCHAR(250)
+  idempleado : CHAR(5) <<FK>>
+  fechahora : DATETIME(3)
+}
+entity incidencias {
+  * idincidencia : INT <<PK>>
+  --
+  codigo : CHAR(10) <<FK>>
+  motivo : ENUM
+  descripcion : VARCHAR(250)
+  idzona : INT <<FK>>
+  idempleado : CHAR(5) <<FK>>
+  fecha : DATETIME
+}
+entity reclamos {
+  * idreclamo : INT <<PK>>
+  --
+  codigo : CHAR(10) <<FK>>
+  idcliente : CHAR(5) <<FK>>
+  detalle : VARCHAR(500)
+  estado : ENUM
+  fecha : DATETIME
+  fecha_cierre : DATETIME
+}
+entity proveedores_integracion {
+  * idproveedor : VARCHAR(20) <<PK>>
+  --
+  tipo : ENUM
+  familia : ENUM
+  activo : TINYINT(1)
+}
+entity notificaciones {
+  * idnotificacion : BIGINT <<PK>>
+  --
+  codigo : CHAR(10) <<FK>>
+  canal : VARCHAR(15)
+  destinatario : VARCHAR(120)
+  mensaje : VARCHAR(500)
+  enviado : TINYINT(1)
+  fecha : DATETIME
+}
+entity auditoria {
+  * idauditoria : BIGINT <<PK>>
+  --
+  idusuario : CHAR(5)
+  rol : VARCHAR(25)
+  accion : VARCHAR(40)
+  codigo : CHAR(10)
+  permitido : TINYINT(1)
+  fecha : DATETIME
+}
+entity alertas {
+  * idalerta : BIGINT <<PK>>
+  --
+  codigo : CHAR(10) <<FK>>
+  nivel : ENUM
+  mensaje : VARCHAR(250)
+  atendida : TINYINT(1)
+  fecha : DATETIME
+}
+entity comandos_log {
+  * idcomando : BIGINT <<PK>>
+  --
+  codigo : CHAR(10) <<FK>>
+  comando : VARCHAR(40)
+  descripcion : VARCHAR(250)
+  estado_previo : VARCHAR(15)
+  estado_nuevo : VARCHAR(15)
+  idempleado : CHAR(5) <<FK>>
+  deshecho : TINYINT(1)
+  fecha : DATETIME(3)
+  fecha_deshecho : DATETIME
+}
+entity historial_laboral {
+  * idhistorial : BIGINT <<PK>>
+  --
+  idempleado : CHAR(5) <<FK>>
+  estado_anterior : VARCHAR(12)
+  estado_nuevo : VARCHAR(12)
+  motivo : VARCHAR(200)
+  usuario : CHAR(5)
+  fecha : DATETIME
+}
+entity historial_remuneracion {
+  * idhistorial : BIGINT <<PK>>
+  --
+  idempleado : CHAR(5) <<FK>>
+  operacion : VARCHAR(20)
+  sueldo_anterior : DECIMAL(10,2)
+  sueldo_nuevo : DECIMAL(10,2)
+  area_anterior : VARCHAR(40)
+  area_nueva : VARCHAR(40)
+  usuario : CHAR(5)
+  fecha : DATETIME
+}
+
+sucursales ||--o{ zonas : idsucursal
+sucursales ||--o{ empleados : idsucursal
+zonas ||--o{ rutas : idzona
+vehiculos ||--o{ rutas : placa
+empleados ||--o{ rutas : idsupervisor
+clientes ||--o{ envios : idcliente
+tipos_servicio ||--o{ envios : idservicio
+direcciones ||--o{ envios : iddir_origen
+direcciones ||--o{ envios : iddir_destino
+zonas ||--o{ envios : idzona_destino
+sucursales ||--o{ envios : idsucursal_recojo
+envios ||--o{ envio_adicionales : codigo
+servicios_adicionales ||--o{ envio_adicionales : idadicional
+unidades_carga }o--o| unidades_carga : idpadre
+rutas ||--o{ unidades_carga : idruta
+unidades_carga ||--o{ unidad_detalle : idunidad
+envios ||--o{ unidad_detalle : codigo
+envios ||--o{ asignaciones : codigo
+empleados ||--o{ asignaciones : idrepartidor
+rutas ||--o{ asignaciones : idruta
+envios ||--o{ seguimientos : codigo
+empleados ||--o{ seguimientos : idempleado
+envios ||--o{ incidencias : codigo
+zonas ||--o{ incidencias : idzona
+empleados ||--o{ incidencias : idempleado
+envios ||--o{ reclamos : codigo
+clientes ||--o{ reclamos : idcliente
+envios ||--o{ notificaciones : codigo
+envios ||--o{ alertas : codigo
+envios ||--o{ comandos_log : codigo
+empleados ||--o{ comandos_log : idempleado
+empleados ||--o{ historial_laboral : idempleado
+empleados ||--o{ historial_remuneracion : idempleado
+@enduml

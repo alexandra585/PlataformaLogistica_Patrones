@@ -1,0 +1,37 @@
+@startuml arquitectura_capas
+skinparam defaultFontSize 11
+skinparam packageStyle rectangle
+title Arquitectura por capas de AppLogistica
+
+package "Presentación (uni.formularios)" as P {
+  [LoginView] 
+  [PrincipalView]
+  [EnvioView / SeguimientoView / ManifiestoView]
+  [EmpleadoView / NominaEmpleadoView]
+  [ReporteView]
+}
+package "Control (uni.controller)" as C {
+  [EnvioController / EmpleadoController / ClienteController]
+  [RegistroEnvioFacade]
+  [GestorComandos / MenuComandos]
+}
+package "Negocio (uni.service + uni.util)" as N {
+  [State / Observer / Command / Memento]
+  [Factory / Abstract Factory / Builder / Prototype]
+  [Adapter / Decorator / Composite / Proxy]
+}
+package "Reportes (uni.reportes)" as R {
+  [Reporte (Bridge) + 6 plantillas .jrxml]
+}
+package "Datos (uni.dao + uni.database)" as D {
+  [DAOs con procedimientos almacenados]
+  [AccesoDB (Singleton)]
+}
+database "MySQL 8\nlogistica" as DB
+P --> C
+C --> N
+P --> R
+R --> D
+N --> D
+D --> DB
+@enduml

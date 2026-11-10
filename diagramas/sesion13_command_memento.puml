@@ -1,0 +1,91 @@
+@startuml sesion13_command_memento
+skinparam classAttributeIconSize 0
+skinparam defaultFontSize 11
+skinparam class {
+  BackgroundColor #F3F7FB
+  BorderColor #1F4E79
+}
+title Sesión 13 - Command + Memento aplicados al empleado (AppLogistica)
+
+package "uni.controller" {
+  class MenuComandos <<Invoker>> {
+    - comando : IComandoEmpleado
+    - bitacora : List<String>
+    + setComando(c : IComandoEmpleado)
+    + ejecutarComando() : String
+    + getBitacora() : List<String>
+  }
+}
+
+package "uni.service" {
+  interface IComandoEmpleado <<Command>> {
+    + ejecutar() : String
+    + getDescripcion() : String
+  }
+  class MostrarDatosCommand
+  class CalcularBonoCommand
+  class CalcularSueldoCommand
+  class AumentarSueldoCommand {
+    - porcentaje : double
+  }
+  class CambiarAreaCommand {
+    - nuevaArea : String
+  }
+  class EmpleadoNomina <<Receiver / Originator>> {
+    - sueldo : double
+    - area : String
+    + mostrarDatos() : String
+    + calcularBono() : double
+    + calcularSueldoFinal() : double
+    + aumentarSueldo(pct : double)
+    + cambiarArea(area : String)
+    + guardar(etiqueta : String) : EmpleadoMemento
+    + restaurar(m : EmpleadoMemento)
+  }
+  class EmpleadoMemento <<Memento>> {
+    - sueldo : double
+    - area : String
+    - fecha : LocalDateTime
+  }
+  interface IRegistroRemuneracion {
+    + actualizarRemuneracion(...)
+  }
+}
+
+package "uni.util" {
+  class HistorialEmpleado <<Caretaker>> {
+    - pila : Deque<EmpleadoMemento>
+    + guardar(m : EmpleadoMemento)
+    + deshacer() : EmpleadoMemento
+    + listar() : List<EmpleadoMemento>
+  }
+}
+
+package "uni.dao" {
+  class EmpleadoDao
+}
+package "uni.formularios" {
+  class NominaEmpleadoView <<Client>>
+}
+
+IComandoEmpleado <|.. MostrarDatosCommand
+IComandoEmpleado <|.. CalcularBonoCommand
+IComandoEmpleado <|.. CalcularSueldoCommand
+IComandoEmpleado <|.. AumentarSueldoCommand
+IComandoEmpleado <|.. CambiarAreaCommand
+MenuComandos o--> IComandoEmpleado
+MostrarDatosCommand --> EmpleadoNomina
+CalcularBonoCommand --> EmpleadoNomina
+CalcularSueldoCommand --> EmpleadoNomina
+AumentarSueldoCommand --> EmpleadoNomina
+CambiarAreaCommand --> EmpleadoNomina
+AumentarSueldoCommand ..> HistorialEmpleado : guarda memento previo
+CambiarAreaCommand ..> HistorialEmpleado : guarda memento previo
+EmpleadoNomina ..> EmpleadoMemento : crea / lee
+HistorialEmpleado o--> "*" EmpleadoMemento
+EmpleadoNomina --> IRegistroRemuneracion
+IRegistroRemuneracion <|.. EmpleadoDao
+NominaEmpleadoView --> MenuComandos
+NominaEmpleadoView ..> IComandoEmpleado : crea
+NominaEmpleadoView --> HistorialEmpleado
+@enduml

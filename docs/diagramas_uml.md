@@ -1,4 +1,6 @@
-# Diagramas UML – AppLogistica (código Mermaid) – Avance 2 (Capítulos I al VI)
+# Diagramas UML – AppLogistica (código Mermaid) – Avance 2 (Capítulos I al VI, actualizado semana 13)
+
+> Las versiones PlantUML (formato del proyecto del docente) de la base de datos, la arquitectura, el Bridge con JasperReports y la Sesión 13 están en la carpeta [`../diagramas`](../diagramas).
 
 Cada bloque puede pegarse en https://mermaid.live o en cualquier editor compatible con Mermaid para regenerar la imagen.
 
@@ -99,7 +101,7 @@ flowchart LR
 flowchart TB
     subgraph P["Capa de Presentación"]
         F["uni.formularios<br/>LoginView · PrincipalView · EnvioView<br/>SeguimientoView · InformeView"]
-        RE["uni.reportes<br/>Reporte · IFormatoReporte (Bridge) · .jrxml"]
+        RE["uni.reportes<br/>Reporte · ISalidaReporte (Bridge) · 6 .jrxml JasperReports"]
     end
     subgraph N["Capa de Negocio"]
         C["uni.controller<br/>EnvioController · RegistroEnvioFacade"]
@@ -581,31 +583,34 @@ classDiagram
     SeguimientoServiceProxy ..> SesionUsuario : rol
 ```
 
-## d19_bridge | Patrón Bridge: reportes × formatos de salida
+## d19_bridge | Patrón Bridge: reportes JasperReports × salidas (actualizado semana 13)
 ```mermaid
 classDiagram
     class Reporte {
         <<abstract>>
-        #formato : IFormatoReporte
-        +setFormato(IFormatoReporte)
+        #salida : ISalidaReporte
+        +setSalida(ISalidaReporte)
         +generar() String
-        #getTitulo()* String
-        #escribirContenido()*
+        +generar(JRDataSource) String
+        +llenar() JasperPrint
+        #getParametros() Map
+        +getTitulo()* String
+        #getPlantilla()* String
     }
-    class IFormatoReporte {
+    class ISalidaReporte {
         <<interface>>
-        +iniciar(String)
-        +encabezado(String...)
-        +fila(Object...)
-        +finalizar() String
+        +emitir(JasperPrint, String) String
     }
-    Reporte o-- IFormatoReporte : puente
-    Reporte <|-- ReporteIncidenciasZona
+    Reporte o-- ISalidaReporte : puente
+    Reporte <|-- ReporteListaEmpleados
+    Reporte <|-- ReporteListadoEnvios
+    Reporte <|-- ReporteManifiesto
     Reporte <|-- ReporteCumplimientoTiempos
+    Reporte <|-- ReporteIncidenciasZona
     Reporte <|-- ReporteProductividadReparto
-    IFormatoReporte <|.. FormatoPantalla
-    IFormatoReporte <|.. FormatoCsv
-    IFormatoReporte <|.. FormatoPdfJasper
+    ISalidaReporte <|.. SalidaVisorJasper
+    ISalidaReporte <|.. SalidaArchivoPdf
+    ISalidaReporte <|.. SalidaImpresora
 ```
 
 ## d20_er | Modelo lógico de la base de datos logistica (actualizado al Avance 2)
@@ -989,4 +994,50 @@ classDiagram
     RecursosHumanosObserver --> historial_laboral : registra
     OperacionesObserver --> alertas : reasignar envíos
     EmpleadoController ..> EmpleadoContexto : login y cambios
+```
+
+## d27_sesion13 | Command y Memento en la nómina del empleado (Sesión 13)
+```mermaid
+classDiagram
+    class IComandoEmpleado {
+        <<interface>>
+        +ejecutar() String
+        +getDescripcion() String
+    }
+    class MenuComandos {
+        -comando : IComandoEmpleado
+        +setComando(IComandoEmpleado)
+        +ejecutarComando() String
+    }
+    class EmpleadoNomina {
+        -sueldo : double
+        -area : String
+        +mostrarDatos() String
+        +calcularBono() double
+        +calcularSueldoFinal() double
+        +aumentarSueldo(double)
+        +cambiarArea(String)
+        +guardar(String) EmpleadoMemento
+        +restaurar(EmpleadoMemento)
+    }
+    class EmpleadoMemento {
+        -sueldo : double
+        -area : String
+    }
+    class HistorialEmpleado {
+        -pila : Deque~EmpleadoMemento~
+        +guardar(EmpleadoMemento)
+        +deshacer() EmpleadoMemento
+    }
+    IComandoEmpleado <|.. MostrarDatosCommand
+    IComandoEmpleado <|.. CalcularBonoCommand
+    IComandoEmpleado <|.. CalcularSueldoCommand
+    IComandoEmpleado <|.. AumentarSueldoCommand
+    IComandoEmpleado <|.. CambiarAreaCommand
+    MenuComandos o--> IComandoEmpleado
+    AumentarSueldoCommand --> EmpleadoNomina
+    CambiarAreaCommand --> EmpleadoNomina
+    AumentarSueldoCommand ..> HistorialEmpleado : memento previo
+    EmpleadoNomina ..> EmpleadoMemento : crea
+    HistorialEmpleado o--> "*" EmpleadoMemento
 ```

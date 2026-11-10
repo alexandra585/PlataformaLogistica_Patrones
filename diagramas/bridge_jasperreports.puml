@@ -1,0 +1,61 @@
+@startuml bridge_jasperreports
+skinparam classAttributeIconSize 0
+skinparam defaultFontSize 11
+skinparam class {
+  BackgroundColor #F3F7FB
+  BorderColor #1F4E79
+}
+title Patrón Bridge con JasperReports (uni.reportes)
+left to right direction
+
+abstract class Reporte <<Abstraction>> {
+  # salida : ISalidaReporte
+  + setSalida(s : ISalidaReporte)
+  + generar() : String
+  + generar(ds : JRDataSource) : String
+  + llenar() : JasperPrint
+  # getParametros() : Map
+  + {abstract} getTitulo() : String
+  # {abstract} getPlantilla() : String
+}
+class ReporteListaEmpleados
+class ReporteListadoEnvios {
+  - estado : String
+}
+class ReporteManifiesto {
+  - idmanifiesto : String
+}
+class ReporteCumplimientoTiempos
+class ReporteIncidenciasZona
+class ReporteProductividadReparto
+
+interface ISalidaReporte <<Implementor>> {
+  + emitir(impreso : JasperPrint, titulo : String) : String
+}
+class SalidaVisorJasper {
+  JRViewer en JInternalFrame
+}
+class SalidaArchivoPdf {
+  JasperExportManager
+}
+class SalidaImpresora {
+  JasperPrintManager
+}
+
+Reporte <|-- ReporteListaEmpleados
+Reporte <|-- ReporteListadoEnvios
+Reporte <|-- ReporteManifiesto
+Reporte <|-- ReporteCumplimientoTiempos
+Reporte <|-- ReporteIncidenciasZona
+Reporte <|-- ReporteProductividadReparto
+Reporte o--> ISalidaReporte : puente
+ISalidaReporte <|.. SalidaVisorJasper
+ISalidaReporte <|.. SalidaArchivoPdf
+ISalidaReporte <|.. SalidaImpresora
+
+note top of Reporte
+  Compila el .jrxml (uni/reportes/*.jrxml) una sola vez,
+  lo llena con la conexión de AccesoDB (Singleton)
+  y delega la entrega a la salida elegida.
+end note
+@enduml
