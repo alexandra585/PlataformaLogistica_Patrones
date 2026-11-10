@@ -16,6 +16,8 @@
 -- =====================================================
 
 SET NAMES utf8mb4;
+-- MySQL Workbench activa el "safe update mode" por defecto; se desactiva solo para este script
+SET SQL_SAFE_UPDATES = 0;
 
 -- Se recrea la base completa (tablas, procedimientos, triggers y vistas)
 -- para que el script pueda ejecutarse cuantas veces sea necesario.

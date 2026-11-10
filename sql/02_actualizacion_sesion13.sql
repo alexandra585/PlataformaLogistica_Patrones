@@ -8,6 +8,8 @@
 
 SET NAMES utf8mb4;
 USE logistica;
+-- MySQL Workbench activa el "safe update mode" por defecto; se desactiva solo para este script
+SET SQL_SAFE_UPDATES = 0;
 
 -- 1. Sueldo y área del empleado (estado que guarda el Memento)
 DROP PROCEDURE IF EXISTS sp_tmp_agregar_columnas;
@@ -30,12 +32,24 @@ BEGIN
         UPDATE empleados SET area = 'GERENCIA' WHERE idempleado = 'E0001';
         UPDATE empleados SET area = 'ATENCION AL CLIENTE' WHERE idempleado = 'E0002';
         UPDATE empleados SET area = 'ALMACEN' WHERE idempleado = 'E0003';
-        UPDATE empleados SET area = 'REPARTO' WHERE rol = 'REPARTIDOR';
+        UPDATE empleados SET area = 'REPARTO' WHERE idempleado IN ('E0010','E0011','E0012');
     END IF;
 END$$
 DELIMITER ;
 CALL sp_tmp_agregar_columnas();
 DROP PROCEDURE sp_tmp_agregar_columnas;
+
+-- Corrige una ejecución anterior que se interrumpió a la mitad (columnas creadas con valores por defecto)
+UPDATE empleados SET sueldo = 6500.00 WHERE idempleado = 'E0001' AND sueldo = 1500.00;
+UPDATE empleados SET sueldo = 1800.00 WHERE idempleado = 'E0002' AND sueldo = 1500.00;
+UPDATE empleados SET sueldo = 2000.00 WHERE idempleado = 'E0003' AND sueldo = 1500.00;
+UPDATE empleados SET sueldo = 3200.00 WHERE idempleado = 'E0004' AND sueldo = 1500.00;
+UPDATE empleados SET sueldo = 1600.00 WHERE idempleado IN ('E0010','E0011') AND sueldo = 1500.00;
+UPDATE empleados SET sueldo = 1550.00 WHERE idempleado = 'E0012' AND sueldo = 1500.00;
+UPDATE empleados SET area = 'GERENCIA' WHERE idempleado = 'E0001' AND area = 'OPERACIONES';
+UPDATE empleados SET area = 'ATENCION AL CLIENTE' WHERE idempleado = 'E0002' AND area = 'OPERACIONES';
+UPDATE empleados SET area = 'ALMACEN' WHERE idempleado = 'E0003' AND area = 'OPERACIONES';
+UPDATE empleados SET area = 'REPARTO' WHERE idempleado IN ('E0010','E0011','E0012') AND area = 'OPERACIONES';
 
 -- 2. Historial de remuneraciones (lo escribe EmpleadoNomina)
 CREATE TABLE IF NOT EXISTS historial_remuneracion (
@@ -89,6 +103,8 @@ INSERT IGNORE INTO unidad_detalle (idunidad, codigo)
 SELECT 'SC-0458-1', 'LR00000008' FROM DUAL
 WHERE EXISTS (SELECT 1 FROM unidades_carga WHERE idunidad = 'SC-0458-1')
   AND EXISTS (SELECT 1 FROM envios WHERE codigo = 'LR00000008');
+
+SET SQL_SAFE_UPDATES = 1;
 
 -- 5. Verificación
 SELECT idempleado, usuario, rol, estado_laboral, sueldo, area FROM empleados;
