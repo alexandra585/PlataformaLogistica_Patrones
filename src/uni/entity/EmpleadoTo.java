@@ -14,6 +14,7 @@ public class EmpleadoTo {
     private String estadoLaboral = "ACTIVO";   // ACTIVO | VACACIONES | INACTIVO (patrón State)
     private double sueldo = 1500.0;            // Command/Memento (Sesión 13)
     private String area = "OPERACIONES";       // Command/Memento (Sesión 13)
+    private String regimen = "AFP";            // AFP | SNP (Polimorfismo GRASP, Sesión 17)
 
     public EmpleadoTo() {
     }
@@ -50,4 +51,6 @@ public class EmpleadoTo {
     public void setSueldo(double sueldo) { this.sueldo = sueldo; }
     public String getArea() { return area; }
     public void setArea(String area) { this.area = area; }
+    public String getRegimen() { return regimen; }
+    public void setRegimen(String regimen) { this.regimen = regimen; }
 }

@@ -1,0 +1,65 @@
+@startuml sesion14_antipatrones
+skinparam classAttributeIconSize 0
+skinparam defaultFontSize 11
+skinparam class {
+  BackgroundColor #F3F7FB
+  BorderColor #1F4E79
+}
+title Sesión 14 - Caso Empleado: versión con antipatrones vs. versión refactorizada
+
+package "ANTES (antipatrones)" {
+  class EmpleadoAntipatron <<God Object>> {
+    +codigo : String
+    +nombres : String
+    +area : String
+    +sueldo : double
+    +horasExtras : int
+    +afp : String
+    +mostrarBoleta()
+    +{static} main(args)
+  }
+  note bottom of EmpleadoAntipatron
+    God Object + Spaghetti Code
+    Magic Numbers (0.11, 0.06, 0.03, 240)
+    if/else por texto (Golden Hammer)
+    atributos public, cálculo + impresión juntos
+  end note
+}
+
+package "DESPUÉS (patrones y buenas prácticas)" {
+  interface DescuentoStrategy <<Strategy>> {
+    +getCodigo() : String
+    +getTasa() : double
+    +calcularDescuento(sueldo) : double
+  }
+  class DescuentoAFP
+  class DescuentoSNP
+  class DescuentoFactory <<Factory Method>> {
+    +{static} crear(tipo) : DescuentoStrategy
+  }
+  class ParametrosPlanilla {
+    +{static} TASA_AFP = 0.11
+    +{static} TASA_SNP = 0.06
+    +{static} TASA_SALUD = 0.03
+    +{static} HORAS_MES = 240
+  }
+  class EmpleadoNomina {
+    -sueldo : double
+    -regimen : DescuentoStrategy
+    +calcularMontoHorasExtras(h) : double
+    +calcularAportePension() : double
+    +calcularDescuentoSalud() : double
+    +calcularSueldoNeto(h) : double
+  }
+  class GeneradorBoleta <<SRP: presentación y registro>>
+}
+DescuentoStrategy <|.. DescuentoAFP
+DescuentoStrategy <|.. DescuentoSNP
+DescuentoFactory ..> DescuentoStrategy : crea
+EmpleadoNomina o--> DescuentoStrategy
+EmpleadoNomina ..> ParametrosPlanilla
+DescuentoAFP ..> ParametrosPlanilla
+DescuentoSNP ..> ParametrosPlanilla
+GeneradorBoleta ..> EmpleadoNomina
+EmpleadoAntipatron .[hidden]right.> DescuentoStrategy
+@enduml

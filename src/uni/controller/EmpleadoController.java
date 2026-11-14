@@ -79,4 +79,15 @@ public class EmpleadoController {
     public List<Object[]> historialRemuneracion(String id) throws Exception {
         return new uni.dao.EmpleadoDao().historialRemuneracion(id);
     }
+
+    // ------------------------------------------------ Sesión 17: boleta de pago (GRASP)
+
+    /** Fabricación pura con su persistencia inyectada (DIP). */
+    public uni.service.GeneradorBoleta boletaGenerador() {
+        return new uni.service.GeneradorBoleta(new uni.dao.BoletaDao());
+    }
+
+    public List<Object[]> boletasListar(String id) throws Exception {
+        return new uni.dao.BoletaDao().listar(id);
+    }
 }

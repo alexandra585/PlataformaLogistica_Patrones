@@ -42,6 +42,7 @@ entity empleados {
   estado_laboral : ENUM
   sueldo : DECIMAL(10,2)
   area : VARCHAR(40)
+  regimen_pensionario : ENUM
 }
 entity clientes {
   * idcliente : CHAR(5) <<PK>>
@@ -250,7 +251,23 @@ entity historial_remuneracion {
   usuario : CHAR(5)
   fecha : DATETIME
 }
-
+entity boletas_pago {
+  * idboleta : INT <<PK>>
+  --
+  idempleado : CHAR(5) <<FK>>
+  periodo : CHAR(7)
+  sueldo_basico : DECIMAL(10,2)
+  horas_extras : INT
+  monto_horas_extras : DECIMAL(10,2)
+  regimen : VARCHAR(5)
+  aporte_pension : DECIMAL(10,2)
+  descuento_salud : DECIMAL(10,2)
+  total_ingresos : DECIMAL(10,2)
+  total_descuentos : DECIMAL(10,2)
+  sueldo_neto : DECIMAL(10,2)
+  usuario : CHAR(5)
+  fecha_emision : DATETIME
+}
 sucursales ||--o{ zonas : idsucursal
 sucursales ||--o{ empleados : idsucursal
 zonas ||--o{ rutas : idzona
@@ -284,4 +301,5 @@ envios ||--o{ comandos_log : codigo
 empleados ||--o{ comandos_log : idempleado
 empleados ||--o{ historial_laboral : idempleado
 empleados ||--o{ historial_remuneracion : idempleado
+empleados ||--o{ boletas_pago : idempleado
 @enduml

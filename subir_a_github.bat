@@ -23,8 +23,11 @@ git config user.email >nul 2>nul || git config user.email "alexandra585@users.no
 REM La estructura ahora es igual a la del proyecto del docente: el proyecto NetBeans
 REM esta en la raiz. Se retiran del repositorio las carpetas antiguas.
 git rm -r -q --cached --ignore-unmatch AppLogistica base_datos >nul 2>nul
+REM El informe ahora se llama Avance3_Cap_I-VIII: se retira la version anterior
+if exist "docs\Informe_AppLogistica_Avance2_Cap_I-VI.docx" del /q "docs\Informe_AppLogistica_Avance2_Cap_I-VI.docx"
+if exist "docs\Informe_AppLogistica_Avance2_Cap_I-VI.pdf" del /q "docs\Informe_AppLogistica_Avance2_Cap_I-VI.pdf"
 git add -A
-git commit -m "Semana 13: Command y Memento en la nomina, reportes JasperReports, scripts SQL 01 y 02, informe actualizado y estructura igual a AppEmpresa"
+git commit -m "Semanas 14 y 17: antipatrones, GRASP (boleta de pago), aportes del equipo (modal, graficos, cerrar sesion), script SQL 03 e informe Avance 3"
 git push -u origin main
 if errorlevel 1 goto error
 echo.

@@ -1,6 +1,6 @@
 # Diagramas UML – AppLogistica (código Mermaid) – Avance 2 (Capítulos I al VI, actualizado semana 13)
 
-> Las versiones PlantUML (formato del proyecto del docente) de la base de datos, la arquitectura, el Bridge con JasperReports y la Sesión 13 están en la carpeta [`../diagramas`](../diagramas).
+> Las versiones PlantUML (formato del proyecto del docente) de la base de datos, la arquitectura, el Bridge con JasperReports y las Sesiones 13, 14 y 17 están en la carpeta [`../diagramas`](../diagramas).
 
 Cada bloque puede pegarse en https://mermaid.live o en cualquier editor compatible con Mermaid para regenerar la imagen.
 

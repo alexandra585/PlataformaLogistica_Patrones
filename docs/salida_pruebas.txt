@@ -62,8 +62,8 @@ Prototipo intacto: destino=- | ¿destino compartido con clon? false
   CORREO con destinatario inválido -> enviado=false
 
 ##SECCION facade
-   [WA-API] +51976543210 template=estado_envio body="LogiRuta LR00000001 - Su envio fue registrado. Llegada estimada: 2026-11-10"
-Resultado: LR00000001 | Servicio EXPRESS (2.5 kg) + Seguro + Firma digital | S/ 39.25 | ETA 2026-11-10
+   [WA-API] +51976543210 template=estado_envio body="LogiRuta LR00000001 - Su envio fue registrado. Llegada estimada: 2026-11-14"
+Resultado: LR00000001 | Servicio EXPRESS (2.5 kg) + Seguro + Firma digital | S/ 39.25 | ETA 2026-11-14
 Destino geolocalizado: (-12.04150, -77.00150)
 
 ##SECCION decorator
@@ -135,7 +135,7 @@ Historial registrado por HistorialSeguimientoObserver:
 Alertas generadas por AlertaSupervisorObserver: [[CRITICA] LR00000001 - Envío EXPRESS observado: riesgo de incumplir 24 h. AUSENCIA_DESTINATARIO: Nadie en domicilio]
 Indicadores: Sesión: 0 entregados | 1 en ruta | 1 observados | 0 devueltos | 0 reversiones
 Se desuscribe la pantalla y se reprograma (la pantalla ya no imprime):
-   [WA-API] +51934555666 template=estado_envio body="LogiRuta LR00000001 - Entrega reprogramada para el 2026-11-10."
+   [WA-API] +51934555666 template=estado_envio body="LogiRuta LR00000001 - Entrega reprogramada para el 2026-11-14."
 Estado final: REPROGRAMADO (paso 2, intentos 1)
 
 ##SECCION state
@@ -160,11 +160,11 @@ Tres intentos fallidos de entrega (LR00000002):
    [WA-API] +51934111222 template=estado_envio body="LogiRuta LR00000002 - Su paquete está en ruta y llegará hoy."
    [WA-API] +51934111222 template=estado_envio body="LogiRuta LR00000002 - No pudimos entregar su paquete (intento 1). Lo contactaremos para coordinar."
    Incidencia 1 -> OBSERVADO (paso 2, intentos 1) permite [REPROGRAMAR, DEVOLVER]
-   [WA-API] +51934111222 template=estado_envio body="LogiRuta LR00000002 - Entrega reprogramada para el 2026-11-10."
+   [WA-API] +51934111222 template=estado_envio body="LogiRuta LR00000002 - Entrega reprogramada para el 2026-11-14."
    [WA-API] +51934111222 template=estado_envio body="LogiRuta LR00000002 - Su paquete está en ruta y llegará hoy."
    [WA-API] +51934111222 template=estado_envio body="LogiRuta LR00000002 - No pudimos entregar su paquete (intento 2). Lo contactaremos para coordinar."
    Incidencia 2 -> OBSERVADO (paso 2, intentos 2) permite [REPROGRAMAR, DEVOLVER]
-   [WA-API] +51934111222 template=estado_envio body="LogiRuta LR00000002 - Entrega reprogramada para el 2026-11-11."
+   [WA-API] +51934111222 template=estado_envio body="LogiRuta LR00000002 - Entrega reprogramada para el 2026-11-15."
    [WA-API] +51934111222 template=estado_envio body="LogiRuta LR00000002 - Su paquete está en ruta y llegará hoy."
    [WA-API] +51934111222 template=estado_envio body="LogiRuta LR00000002 - No pudimos entregar su paquete (intento 3). Lo contactaremos para coordinar."
    Incidencia 3 -> OBSERVADO (paso 2, intentos 3) permite [DEVOLVER]
@@ -215,9 +215,9 @@ Macro-comando: despachar manifiesto de 3 envíos (uno inválido):
    [WA-API] +51999888777 template=estado_envio body="LogiRuta LR00000001 - Su paquete está en ruta y llegará hoy."
    [WA-API] +51999888777 template=estado_envio body="LogiRuta LR00000001 - No pudimos entregar su paquete (intento 1). Lo contactaremos para coordinar."
 Estado actual: OBSERVADO (paso 4, intentos 1)
-Caretaker guarda: 18:24:23 | Antes de reprogramar | volver a OBSERVADO
-   [WA-API] +51999888777 template=estado_envio body="LogiRuta LR00000001 - Entrega reprogramada para el 2026-11-11."
-Tras reprogramar: REPROGRAMADO (paso 4, intentos 1) fechaProgramada=2026-11-11
+Caretaker guarda: 23:25:57 | Antes de reprogramar | volver a OBSERVADO
+   [WA-API] +51999888777 template=estado_envio body="LogiRuta LR00000001 - Entrega reprogramada para el 2026-11-15."
+Tras reprogramar: REPROGRAMADO (paso 4, intentos 1) fechaProgramada=2026-11-15
 El cliente cancela la reprogramación -> restaurar último memento
    [WA-API] +51999888777 template=estado_envio body="LogiRuta LR00000001 - Corregimos el estado de su envío: OBSERVADO"
 Restaurado: OBSERVADO (paso 4, intentos 1) fechaProgramada=null
@@ -268,13 +268,13 @@ Reincorporar:
    Deshacer 4 -> Empleado: E0099 - Roy Saavedra | Área: ALMACEN | Sueldo: S/ 3000.00
    Sin más estados: true
 -- Bitácora del Invoker --
-   18:24:23  [Mostrar datos]  Empleado: E0099 - Roy Saavedra | Área: ALMACEN | Sueldo: S/ 3000.00
-   18:24:23  [Calcular bono]  Bono calculado (10 %): S/ 300.00
-   18:24:23  [Calcular sueldo final]  Sueldo final: S/ 3300.00
-   18:24:23  [Aumentar sueldo 10.0 %]  Sueldo aumentado 10.0 %: S/ 3000.00 -> S/ 3300.00
-   18:24:23  [Calcular sueldo final]  Sueldo final: S/ 3630.00
-   18:24:23  [Cambiar área a Supervision]  Área cambiada: ALMACEN -> SUPERVISION
-   18:24:23  [Aumentar sueldo 20.0 %]  Sueldo aumentado 20.0 %: S/ 3300.00 -> S/ 3960.00
+   23:25:57  [Mostrar datos]  Empleado: E0099 - Roy Saavedra | Área: ALMACEN | Sueldo: S/ 3000.00
+   23:25:57  [Calcular bono]  Bono calculado (10 %): S/ 300.00
+   23:25:57  [Calcular sueldo final]  Sueldo final: S/ 3300.00
+   23:25:57  [Aumentar sueldo 10.0 %]  Sueldo aumentado 10.0 %: S/ 3000.00 -> S/ 3300.00
+   23:25:57  [Calcular sueldo final]  Sueldo final: S/ 3630.00
+   23:25:57  [Cambiar área a Supervision]  Área cambiada: ALMACEN -> SUPERVISION
+   23:25:57  [Aumentar sueldo 20.0 %]  Sueldo aumentado 20.0 %: S/ 3300.00 -> S/ 3960.00
 -- Registros enviados a la BD (historial_remuneracion) --
    E0099 AUMENTO -> S/ 3300.00, ALMACEN
    E0099 CAMBIO_AREA -> S/ 3300.00, SUPERVISION
@@ -283,3 +283,48 @@ Reincorporar:
    E0099 RESTAURACION -> S/ 3300.00, ALMACEN
    E0099 RESTAURACION -> S/ 3300.00, ALMACEN
    E0099 RESTAURACION -> S/ 3000.00, ALMACEN
+
+##SECCION antipatrones
+-- Parte 1: versión con antipatrones (EmpleadoAntipatron) --
+=== BOLETA DE PAGO ===
+Código: E001
+Nombre: Roy Saavedra
+Área: Sistemas
+Sueldo básico: 2500.0
+Horas extras: 10
+Descuento AFP: 275.0
+Descuento SNP: 0.0
+Descuento Salud: 75.0
+Sueldo neto: 2254.1666666666665
+-- Parte 2: versión refactorizada (Strategy + Factory Method + constantes) --
+   AFP -> DescuentoAFP | aporte S/ 275.00 | salud S/ 75.00 | horas extras (10 h) S/ 104.17 | neto S/ 2254.17
+   SNP -> DescuentoSNP | aporte S/ 150.00 | salud S/ 75.00 | horas extras (10 h) S/ 104.17 | neto S/ 2379.17
+   Régimen desconocido: RECHAZADO -> Régimen pensionario no reconocido: XYZ
+
+##SECCION grasp
+-- Experto en información: EmpleadoNomina calcula con sus propios datos --
+   Iván Cárdenas: horas extras(10) S/ 66.67, aporte S/ 176.00, salud S/ 48.00, neto S/ 1442.67
+-- Polimorfismo: el mismo mensaje calcularAportePension() --
+   Iván Cárdenas    AFP (sistema privado de pensiones)     -> S/ 176.00
+   Mario Huamán     SNP / ONP (sistema nacional de pensiones) -> S/ 96.00
+-- Fabricación pura: GeneradorBoleta arma, registra e imprime --
+   BOLETA DE PAGO 2026-11
+   E0010 - Iván Cárdenas (REPARTO)
+   
+   Sueldo básico .................. S/    1600.00
+   Horas extras (10 h) ............ S/      66.67
+   TOTAL INGRESOS ................. S/    1666.67
+   
+   Aporte AFP ...................... S/     176.00
+   Salud (3 %) ..................... S/      48.00
+   TOTAL DESCUENTOS ............... S/     224.00
+   
+   SUELDO NETO .................... S/    1442.67
+   Mismo empleado pasado a SNP: aporte S/ 96.00, neto S/ 1456.00
+   Periodo 2026-13: RECHAZADO -> El periodo debe tener el formato AAAA-MM (por ejemplo 2026-11).
+   Horas extras -5: RECHAZADO -> Las horas extras no pueden ser negativas.
+   empleados.regimen_pensionario <- E0010 = AFP
+   boletas_pago <- E0010 2026-11 neto S/ 1442.67 (por E0001)
+   empleados.regimen_pensionario <- E0010 = SNP
+   boletas_pago <- E0010 2026-12 neto S/ 1456.00 (por E0001)
+   PDF generado (1 pág.): salida_reportes/boleta_pago.pdf

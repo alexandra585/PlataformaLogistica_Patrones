@@ -1,0 +1,60 @@
+@startuml sesion17_grasp_boleta
+skinparam classAttributeIconSize 0
+skinparam defaultFontSize 11
+skinparam class {
+  BackgroundColor #F3F7FB
+  BorderColor #1F4E79
+}
+title Sesión 17 - Boleta de pago con patrones GRASP
+
+class BoletaPagoView <<Presentación>>
+class EmpleadoController <<Controlador>> {
+  +nominaCrear(id) : EmpleadoNomina
+  +boletaGenerador() : GeneradorBoleta
+}
+class EmpleadoNomina <<Experto en información>> {
+  -sueldo : double
+  -regimen : DescuentoStrategy
+  +calcularMontoHorasExtras(horas) : double
+  +calcularAportePension() : double
+  +calcularDescuentoSalud() : double
+  +calcularTotalDescuentos() : double
+  +calcularSueldoNeto(horas) : double
+}
+interface DescuentoStrategy <<Polimorfismo>> {
+  +getCodigo() : String
+  +getTasa() : double
+  +calcularDescuento(sueldo) : double
+}
+class DescuentoAFP
+class DescuentoSNP
+class GeneradorBoleta <<Fabricación pura>> {
+  +calcular(empleado, periodo, horas) : BoletaPagoTo
+  +emitir(empleado, periodo, horas, usuario) : BoletaPagoTo
+  +imprimir(boleta, salida) : String
+}
+interface IRegistroBoleta {
+  +registrar(boleta, usuario) : int
+  +cambiarRegimen(id, regimen)
+}
+class BoletaDao <<Fabricación pura>>
+class BoletaPagoTo
+class ReporteBoletaPago <<Bridge: RefinedAbstraction>>
+interface ISalidaReporte
+class "boletas_pago" as T <<tabla MySQL>>
+
+BoletaPagoView --> EmpleadoController
+EmpleadoController ..> EmpleadoNomina : crea
+EmpleadoController ..> GeneradorBoleta : crea
+BoletaPagoView --> GeneradorBoleta
+GeneradorBoleta --> EmpleadoNomina : pide los montos
+EmpleadoNomina o--> DescuentoStrategy
+DescuentoStrategy <|.. DescuentoAFP
+DescuentoStrategy <|.. DescuentoSNP
+GeneradorBoleta --> IRegistroBoleta
+IRegistroBoleta <|.. BoletaDao
+BoletaDao --> T
+GeneradorBoleta ..> BoletaPagoTo : arma
+GeneradorBoleta ..> ReporteBoletaPago : imprime
+ReporteBoletaPago o--> ISalidaReporte
+@enduml

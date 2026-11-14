@@ -31,7 +31,7 @@ public class EmpleadoView extends FormularioBase {
         RolUsuario.REPARTIDOR, RolUsuario.ADMINISTRADOR});
     private final JComboBox<ItemCombo> cboSucursal = new JComboBox<>();
     private final DefaultTableModel modelo = modelo("Código", "Nombre", "Apellidos", "Email",
-            "Usuario", "Rol", "Sucursal", "Activo", "Estado laboral", "Área", "Sueldo");
+            "Usuario", "Rol", "Sucursal", "Activo", "Estado laboral", "Área", "Sueldo", "Régimen");
     private final JTable tbl = tabla(modelo);
 
     public EmpleadoView() {
@@ -56,6 +56,7 @@ public class EmpleadoView extends FormularioBase {
         botones.add(boton("Estado laboral (State)", "update.png", e -> cambiarEstadoLaboral()));
         botones.add(boton("Historial laboral", "Information.png", e -> verHistorialLaboral()));
         botones.add(boton("Nómina (Command/Memento)", "Chart.png", e -> abrirNomina()));
+        botones.add(boton("Boleta (GRASP)", "printer.png", e -> abrirInterno(new BoletaPagoView(txtId.getText().trim()))));
         botones.add(boton("Cerrar", "Cancel.png", e -> dispose()));
         JPanel norte = new JPanel(new BorderLayout());
         norte.add(datos, BorderLayout.CENTER);
@@ -93,7 +94,7 @@ public class EmpleadoView extends FormularioBase {
             for (EmpleadoTo e : controller.empleadoListar()) {
                 modelo.addRow(new Object[]{e.getIdempleado(), e.getNombre(), e.getApellidos(), e.getEmail(),
                     e.getUsuario(), e.getRol(), e.getIdsucursal(), e.isActivo() ? "Sí" : "No", e.getEstadoLaboral(),
-                    e.getArea(), String.format("%.2f", e.getSueldo())});
+                    e.getArea(), String.format("%.2f", e.getSueldo()), e.getRegimen()});
             }
         } catch (Exception ex) {
             error(ex);
@@ -198,5 +199,13 @@ public class EmpleadoView extends FormularioBase {
                 listar();
             }
         });
+    }
+
+    /** Sesión 17: abre la boleta de pago del empleado seleccionado. */
+    private void abrirInterno(javax.swing.JInternalFrame v) {
+        getDesktopPane().add(v);
+        v.setLocation(Math.max(0, getX() + 30), Math.max(0, getY() + 30));
+        v.setVisible(true);
+        v.toFront();
     }
 }

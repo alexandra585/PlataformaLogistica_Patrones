@@ -5,9 +5,9 @@ Aplicación de escritorio en **Java Swing (Apache NetBeans + Ant)** con base de 
 **JasperReports**, para la empresa ficticia **LogiRuta Perú S.A.C.** Aplica principios **SOLID** y patrones **GoF**
 creacionales, estructurales y de comportamiento.
 
-> Estado: **Avance 2 – Capítulos I al VI, actualizado a la semana 13** (Command y Memento, con el ejercicio de
-> clase sobre el empleado y reportes JasperReports en PDF). Los capítulos VII al XII (antipatrones, GRASP,
-> implementación final, pruebas, conclusiones y recomendaciones) se desarrollan en las siguientes entregas.
+> Estado: **Avance 3 – Capítulos I al VIII, actualizado a la semana 17**: antipatrones (semana 14) y patrones GRASP
+> Experto en información, Fabricación pura y Polimorfismo (semana 17) con la nueva **boleta de pago**. Los
+> capítulos IX al XII (implementación final, pruebas, conclusiones y recomendaciones) se completan en la entrega final.
 
 El repositorio sigue la misma organización que el proyecto de ejemplo del docente (**AppEmpresa**): el proyecto
 NetBeans está en la raíz, las librerías en `lib/runtime`, los scripts en `sql/` y los diagramas en `diagramas/`.
@@ -32,11 +32,12 @@ PlataformaLogistica_Patrones/
 ├── lib/runtime/     JasperReports 6.21.3, mysql-connector-j 8.4.0 y dependencias
 ├── sql/
 │   ├── 01_instalacion_inicial.sql       Crea la base "logistica" completa con datos de prueba
-│   └── 02_actualizacion_sesion13.sql    Actualiza una base del Avance 2 sin borrar datos
-├── diagramas/       Fuentes PlantUML (.puml) e imágenes: BD, arquitectura, Bridge, Sesión 13
+│   ├── 02_actualizacion_sesion13.sql    Actualiza una base del Avance 2 sin borrar datos
+│   └── 03_actualizacion_semana17.sql    Agrega régimen AFP/SNP y boletas de pago (después del 02)
+├── diagramas/       Fuentes PlantUML (.puml) e imágenes: BD, arquitectura, Bridge, Sesiones 13, 14 y 17
 ├── docs/
-│   ├── Informe_AppLogistica_Avance2_Cap_I-VI.docx / .pdf
-│   ├── reportes_ejemplo/   Los 6 reportes Jasper exportados a PDF
+│   ├── Informe_AppLogistica_Avance3_Cap_I-VIII.docx / .pdf
+│   ├── reportes_ejemplo/   Los reportes Jasper (con gráficos) y una boleta de pago en PDF
 │   ├── capturas/           Capturas de la aplicación
 │   ├── diagramas_uml.md    Código Mermaid de los diagramas del informe
 │   ├── salida_pruebas.txt  Salida de las pruebas por consola
@@ -63,8 +64,8 @@ PlataformaLogistica_Patrones/
    - *Instalación nueva:* abrir `sql/01_instalacion_inicial.sql` en MySQL Workbench (usuario root) y ejecutarlo
      completo (rayo). Crea la base `logistica`, el usuario `logistica` / `logistica`, tablas, procedimientos, triggers,
      vistas y **datos precargados**. Si se ejecuta de nuevo, borra y recrea la base.
-   - *Ya tengo la base del Avance 2 con mis datos:* ejecutar solo `sql/02_actualizacion_sesion13.sql`
-     (agrega sueldo y área a empleados, la tabla `historial_remuneracion`, su procedimiento y un manifiesto de ejemplo).
+   - *Ya tengo una base anterior con mis datos:* ejecutar en orden `sql/02_actualizacion_sesion13.sql` y
+     `sql/03_actualizacion_semana17.sql` (no borran datos y pueden ejecutarse más de una vez).
 3. **Abrir el proyecto:** en NetBeans, *File › Open Project* y seleccionar la carpeta del repositorio
    (la que contiene `build.xml` y `nbproject`).
 4. **(Opcional)** Si MySQL usa otro puerto o usuario, editar `db.properties`. La clave
@@ -78,7 +79,7 @@ Desde consola (con Ant): `ant clean jar` y luego `java -jar dist/AppLogistica.ja
 
 | Usuario | Contraseña | Rol | Uso sugerido |
 |---|---|---|---|
-| admin | admin | ADMINISTRADOR | Todas las opciones (incluye Nómina y Reportes) |
+| admin | admin | ADMINISTRADOR | Todas las opciones (incluye Nómina, Boleta de pago y Reportes) |
 | rquispe | 123456 | AGENTE_VENTANILLA | Clientes y registro de envíos |
 | lmendoza | 123456 | OPERADOR_ALMACEN | Recoger, clasificar, manifiestos |
 | jtorres | 123456 | SUPERVISOR_RUTA | Manifiestos, reportes, alertas, revertir entregas |
@@ -110,6 +111,10 @@ Las contraseñas se guardan con hash SHA-256.
 | Comportamiento | Observer | Persistencia, historial, notificación, alertas, indicadores y pantalla en vivo |
 | Comportamiento | Command | `GestorComandos` (envíos: deshacer/rehacer, cola sin conexión, macro) y `MenuComandos` (nómina, Sesión 13) |
 | Comportamiento | Memento | `EnvioMemento` + `HistorialMementos`; `EmpleadoMemento` + `HistorialEmpleado` (Sesión 13) |
+| Antipatrones | Caso Empleado (Sesión 14) | `EmpleadoAntipatron` (solo didáctico) frente a `DescuentoStrategy` + `DescuentoFactory` + `ParametrosPlanilla` |
+| GRASP | Experto en información | `EmpleadoNomina` calcula horas extras, descuentos y sueldo neto |
+| GRASP | Fabricación pura | `GeneradorBoleta`, `BoletaDao` (también `AccesoDB` y los DAO) |
+| GRASP | Polimorfismo | `DescuentoStrategy` → `DescuentoAFP` / `DescuentoSNP` (también estados, servicios y salidas de reporte) |
 
 ## Semana 13: Command y Memento sobre el empleado
 
@@ -130,6 +135,23 @@ En la aplicación: **Archivo › Nómina del empleado (Command/Memento)** o el b
 Cada aumento o cambio de área guarda antes un memento, y todo cambio queda registrado en la tabla
 `historial_remuneracion`.
 
+## Semanas 14 y 17: antipatrones y GRASP (boleta de pago)
+
+- **Antipatrones (Cap. VII del informe):** un antipatrón no se implementa; se identifica y se corrige. Se documentan
+  los de desarrollo (God Object, Spaghetti Code, Big Ball of Mud, Shotgun Surgery, Vendor Lock-In, Golden Hammer,
+  Magic Numbers, Copy-Paste, Lava Flow, Singletonitis) y los organizacionales, y se replica el caso de clase del
+  Empleado: `uni.util.EmpleadoAntipatron` (versión con errores) frente a la versión refactorizada con Strategy y
+  Factory Method. Ambas calculan el mismo neto (S/ 2254.17).
+- **Boleta de pago (Cap. VIII):** **Archivo › Boleta de pago (GRASP)** o el botón *Boleta* en Empleados. Se elige el
+  periodo, las horas extras y el régimen (AFP 11 % o SNP 6 %, más salud 3 %); *Calcular* muestra la vista previa y
+  *Emitir* la registra en `boletas_pago` y la abre en el visor de JasperReports.
+
+## Aportes del equipo
+
+- Búsqueda modal del remitente al registrar un envío (`ClienteBuscarDialog`).
+- Gráficos de barras en los seis reportes JasperReports.
+- Opción **Archivo › Cerrar sesión**.
+
 ## Reportes con JasperReports
 
 **Reportes › Reportes (JasperReports)**: se elige el reporte, el filtro y la salida (visor, archivo PDF o impresora).
@@ -143,6 +165,7 @@ Igual que en AppEmpresa, cada `.jrxml` se compila al abrir el reporte y se llena
 | Cumplimiento de tiempos | `cumplimientoTiempos.jrxml` | — |
 | Incidencias por zona | `incidenciasZona.jrxml` | — |
 | Productividad de reparto | `productividadReparto.jrxml` | — |
+| Boleta de pago (Sesión 17) | `boletaPago.jrxml` | Boleta emitida |
 
 Los seis PDF generados con los datos precargados están en [`docs/reportes_ejemplo`](docs/reportes_ejemplo).
 
@@ -159,21 +182,22 @@ Los seis PDF generados con los datos precargados están en [`docs/reportes_ejemp
 
 - `uni.util.PruebaPatrones` – capítulos III al VI (incluye la Sesión 13 y genera dos PDF Jasper en `salida_reportes/`).
 - `uni.util.PruebaComportamiento` – solo patrones de comportamiento.
+- `uni.util.PruebaGrasp` – antipatrones (Sesión 14) y GRASP (Sesión 17); genera `salida_reportes/boleta_pago.pdf`.
 
 La salida está en [`docs/salida_pruebas.txt`](docs/salida_pruebas.txt) y el detalle de las pruebas en
 [`INFORME_Y_PRUEBAS.md`](INFORME_Y_PRUEBAS.md).
 
 ## Capturas
 
-| Nómina: Command + Memento | Reporte Jasper: manifiesto | Seguimiento (State) |
+| Boleta de pago (GRASP) | Reporte Jasper con gráfico | Nómina: Command + Memento |
 |---|---|---|
-| ![Nómina](docs/capturas/26_nomina_puntos_memento.png) | ![Manifiesto](docs/capturas/30_jasper_manifiesto.png) | ![Seguimiento](docs/capturas/05_seguimiento_state.png) |
+| ![Boleta](docs/capturas/36_boleta_jasper_pdf.png) | ![Cumplimiento](docs/capturas/37_jasper_cumplimiento_grafico.png) | ![Nómina](docs/capturas/26_nomina_puntos_memento.png) |
 
 Más capturas en [`docs/capturas`](docs/capturas).
 
 ## Documentación
 
-- Informe del avance: [`docs/Informe_AppLogistica_Avance2_Cap_I-VI.pdf`](docs/Informe_AppLogistica_Avance2_Cap_I-VI.pdf)
+- Informe del avance: [`docs/Informe_AppLogistica_Avance3_Cap_I-VIII.pdf`](docs/Informe_AppLogistica_Avance3_Cap_I-VIII.pdf)
 - Diagramas PlantUML: [`diagramas/`](diagramas) · Diagramas Mermaid del informe: [`docs/diagramas_uml.md`](docs/diagramas_uml.md)
 
 ---

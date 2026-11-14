@@ -1,4 +1,36 @@
-# Informe de cambios y pruebas – actualización de la semana 13
+# Informe de cambios y pruebas – actualización de las semanas 14 y 17
+
+## Cambios de esta versión
+
+- **Aportes del equipo (integrados):** buscador modal del remitente (`ClienteBuscarDialog`) en el registro de
+  envíos, gráficos de barras en los seis reportes `.jrxml` y la opción *Archivo › Cerrar sesión*.
+- **Semana 14 – Antipatrones (Cap. VII):** se documentan los antipatrones de desarrollo y organizacionales que el
+  diseño evitó o corrigió, con la tabla antipatrón → patrón que lo reemplaza. Se replica el caso de clase del
+  Empleado: `EmpleadoAntipatron` (solo didáctico) frente a `DescuentoStrategy`, `DescuentoAFP`, `DescuentoSNP`,
+  `DescuentoFactory` y `ParametrosPlanilla`.
+- **Semana 17 – GRASP (Cap. VIII):** nueva **boleta de pago**. Experto en información: `EmpleadoNomina` calcula
+  horas extras, aporte, salud y neto. Polimorfismo: `DescuentoStrategy` (AFP 11 %, SNP 6 %). Fabricación pura:
+  `GeneradorBoleta` y `BoletaDao`. Reporte `boletaPago.jrxml`, ventana `BoletaPagoView` y prueba `PruebaGrasp`.
+  Creador, Controlador, Bajo acoplamiento y Alta cohesión quedan para cuando se vean en clase.
+- **Base de datos:** `empleados.regimen_pensionario`, tabla `boletas_pago`, procedimientos `sp_Boleta_Registrar` y
+  `sp_Empleado_CambiarRegimen`, una boleta de ejemplo y el script `sql/03_actualizacion_semana17.sql`.
+- **Informe:** pasa a *Avance 3 (Capítulos I al VIII)*: Cap. VII y VIII nuevos, evidencias de los aportes del
+  equipo, modelo entidad-relación, diccionario, casos de prueba, referencias y anexo actualizados (153 páginas).
+
+## Pruebas de esta versión
+
+- `ant clean jar` con JDK 21: correcto.
+- `01_instalacion_inicial.sql` desde cero y repetido, con el modo seguro de Workbench activo: correcto.
+- `02` + `03` sobre la base del Avance 2 con datos, y `03` ejecutado dos veces: correcto, sin duplicados.
+- `PruebaGrasp`: la versión con antipatrones y la refactorizada dan el mismo neto (S/ 2254.17); AFP/SNP,
+  periodos y horas inválidas rechazados; PDF de la boleta generado.
+- Con MySQL: boleta de E0011 (SNP, 12 h) = S/ 1536.00; re-emitir el mismo periodo actualiza la misma boleta.
+- Los 6 reportes con gráfico y la boleta se exportaron a PDF (`docs/reportes_ejemplo`).
+- Capturas 24 y 30 a 37: modal del remitente, menú con Cerrar sesión, boleta (vista previa y visor) y reportes con gráfico.
+
+---
+
+# Versión anterior – actualización de la semana 13
 
 ## Cambios principales
 
@@ -28,8 +60,8 @@
 | IV Creacionales (Singleton, Factory, Abstract Factory, Builder, Prototype + comparación) | Completo |
 | V Estructurales (Adapter, Facade, Decorator, Composite, Proxy, Bridge) | Completo; Bridge actualizado a JasperReports |
 | VI Comportamiento (Observer, State, Command, Memento) | Completo + 6.5 (Sesión 12) y 6.6 (Sesión 13) |
-| VII Antipatrones (semana 14) | Pendiente – futuras entregas |
-| VIII GRASP (Unidad 5) | Pendiente – futuras entregas |
+| VII Antipatrones (semana 14) | Completo en el Avance 3 |
+| VIII GRASP (Unidad 5) | Experto, Fabricación pura y Polimorfismo completos; el resto pendiente |
 | IX Implementación, X Pruebas | Avance (arquitectura, BD, casos de prueba, evidencias) |
 | XI Conclusiones, XII Recomendaciones | Pendiente – entrega final |
 | Referencias APA 7, Anexos | Actualizados (guía de instalación y usuarios) |

@@ -17,7 +17,7 @@ import uni.service.IRegistroRemuneracion;
 public class EmpleadoDao implements ICrudDao<EmpleadoTo>, IRegistroRemuneracion {
 
     private static final String SELECT = "SELECT idempleado, nombre, apellidos, email, usuario, "
-            + "rol, idsucursal, activo, estado_laboral, sueldo, area FROM empleados ";
+            + "rol, idsucursal, activo, estado_laboral, sueldo, area, regimen_pensionario FROM empleados ";
 
     @Override
     public void create(EmpleadoTo o) throws Exception {
@@ -110,6 +110,7 @@ public class EmpleadoDao implements ICrudDao<EmpleadoTo>, IRegistroRemuneracion 
                     e.setEstadoLaboral(rs.getString("estado_laboral"));
                     e.setSueldo(rs.getDouble("sueldo"));
                     e.setArea(rs.getString("area"));
+                    e.setRegimen(rs.getString("regimen_pensionario"));
                     lista.add(e);
                 }
             }

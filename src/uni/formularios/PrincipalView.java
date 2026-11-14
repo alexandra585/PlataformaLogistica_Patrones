@@ -90,7 +90,22 @@ public class PrincipalView extends JFrame {
         archivo.add(item("Empleados", "User.png", () -> abrir(new EmpleadoView()), RolUsuario.ADMINISTRADOR));
         archivo.add(item("Nómina del empleado (Command/Memento)", "Chart.png",
                 () -> abrir(new NominaEmpleadoView(null)), RolUsuario.ADMINISTRADOR));
+        archivo.add(item("Boleta de pago (GRASP)", "printer.png",
+                () -> abrir(new BoletaPagoView(null)), RolUsuario.ADMINISTRADOR));
         archivo.addSeparator();
+        archivo.add(item("Cerrar Sesión", "cerrar_sesion.png", () -> {
+            int confirm = JOptionPane.showConfirmDialog(
+                    this,
+                    "¿Estás seguro de que deseas cerrar sesión?",
+                    "Cerrar Sesión",
+                    JOptionPane.YES_NO_OPTION
+            );
+            if (confirm == JOptionPane.YES_OPTION) {
+                SesionUsuario.getInstancia().cerrar();
+                dispose();
+                new LoginView().setVisible(true);
+            }
+        }, (RolUsuario[]) null));
         archivo.add(item("Salir", "application-exit.png", this::salir, (RolUsuario[]) null));
         menuBar.add(archivo);
 
@@ -147,24 +162,28 @@ public class PrincipalView extends JFrame {
                 + ConfiguracionSistema.getInstancia().getIndicadores().getResumen());
     }
 
-    private JMenuItem item(String texto, String icono, Runnable accion, RolUsuario... roles) {
-        JMenuItem mi = new JMenuItem(texto);
-        URL url = getClass().getResource("/imagen/" + icono);
-        if (url != null) {
-            mi.setIcon(new ImageIcon(url));
-        }
-        if (roles != null) {
-            Set<RolUsuario> permitidos = EnumSet.noneOf(RolUsuario.class);
-            for (RolUsuario r : roles) {
-                permitidos.add(r);
-            }
-            mi.setEnabled(permitidos.contains(SesionUsuario.getInstancia().getUsuario().getRol()));
-        }
-        mi.addActionListener(e -> accion.run());
-        return mi;
+private JMenuItem item(String texto, String icono, Runnable accion, RolUsuario... roles) {
+    JMenuItem mi = new JMenuItem(texto);
+    URL url = getClass().getResource("/imagen/" + icono);
+    if (url != null) {
+        ImageIcon imageIcon = new ImageIcon(url);
+        java.awt.Image image = imageIcon.getImage().getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH);
+        mi.setIcon(new ImageIcon(image));
     }
+    if (roles != null) {
+        Set<RolUsuario> permitidos = EnumSet.noneOf(RolUsuario.class);
+        for (RolUsuario r : roles) {
+            permitidos.add(r);
+        }
+        mi.setEnabled(permitidos.contains(SesionUsuario.getInstancia().getUsuario().getRol()));
+    }
+    mi.addActionListener(e -> accion.run());
+    return mi;
+}
 
-    /** Agrega un formulario interno al escritorio, centrado. */
+    /**
+     * Agrega un formulario interno al escritorio, centrado.
+     */
     public void abrir(JInternalFrame f) {
         desktopPane.add(f);
         int x = Math.max(0, (desktopPane.getWidth() - f.getWidth()) / 2);

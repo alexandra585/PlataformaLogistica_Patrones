@@ -1,32 +1,393 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="listadoEnvios" language="java" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="9e4242f2-2c5f-44ab-91c9-a1131979246f">
-<style name="Fila" mode="Opaque" backcolor="#FFFFFF"><conditionalStyle><conditionExpression><![CDATA[$V{REPORT_COUNT} % 2 == 0]]></conditionExpression><style mode="Opaque" backcolor="#F3F7FB"/></conditionalStyle></style>
-<parameter name="P_ESTADO" class="java.lang.String"><parameterDescription><![CDATA[Estado a filtrar; null = todos]]></parameterDescription></parameter>
-<queryString language="SQL"><![CDATA[SELECT e.codigo, c.razonsocial AS cliente, e.idservicio AS servicio, e.nombre_dest AS destinatario,
-       d.distrito, e.peso_kg, e.costo, e.estado, e.fecha_registro, e.fecha_estimada
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="listadoEnvios" language="java" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="7b2e3c4d-5f6a-7b8c-9d0e-1f2a3b4c5d6e">
+    
+    <parameter name="P_ESTADO" class="java.lang.String">
+        <parameterDescription><![CDATA[Estado a filtrar; null = todos]]></parameterDescription>
+    </parameter>
+
+    <queryString language="SQL"><![CDATA[SELECT e.codigo, c.razonsocial AS cliente, e.idservicio AS servicio, e.nombre_dest AS destinatario,
+        d.distrito, e.peso_kg, e.costo, e.estado, e.fecha_registro, e.fecha_estimada
 FROM envios e
 JOIN clientes c ON c.idcliente = e.idcliente
 LEFT JOIN direcciones d ON d.iddireccion = e.iddir_destino
 WHERE ($P{P_ESTADO} IS NULL OR e.estado = $P{P_ESTADO})
 ORDER BY FIELD(e.estado,'REGISTRADO','RECOGIDO','EN_TRANSITO','CLASIFICADO','EN_RUTA','OBSERVADO','REPROGRAMADO','ENTREGADO','DEVUELTO'), e.codigo]]></queryString>
-<field name="codigo" class="java.lang.String"/>
-<field name="cliente" class="java.lang.String"/>
-<field name="servicio" class="java.lang.String"/>
-<field name="destinatario" class="java.lang.String"/>
-<field name="distrito" class="java.lang.String"/>
-<field name="peso_kg" class="java.math.BigDecimal"/>
-<field name="costo" class="java.math.BigDecimal"/>
-<field name="estado" class="java.lang.String"/>
-<field name="fecha_registro" class="java.sql.Timestamp"/>
-<field name="fecha_estimada" class="java.sql.Date"/>
-<variable name="TOTAL_REG" class="java.lang.Integer" resetType="Report" calculation="Count"><variableExpression><![CDATA[$F{codigo}]]></variableExpression><initialValueExpression><![CDATA[Integer.valueOf(0)]]></initialValueExpression></variable>
-<variable name="TOTAL_COSTO" class="java.math.BigDecimal" resetType="Report" calculation="Sum"><variableExpression><![CDATA[$F{costo}]]></variableExpression><initialValueExpression><![CDATA[java.math.BigDecimal.ZERO]]></initialValueExpression></variable>
-<group name="Estado"><groupExpression><![CDATA[$F{estado}]]></groupExpression><groupHeader><band height="22"><rectangle><reportElement mode="Opaque" x="0" y="4" width="802" height="18" forecolor="#DEEAF6" backcolor="#DEEAF6" uuid="5eaaf5a4-0287-443f-9154-74fa0ea83716"/></rectangle><textField isBlankWhenNull="true"><reportElement x="0" y="4" width="802" height="18" forecolor="#1F4E79" uuid="03bc18fe-bb1a-47b2-bc9f-59620c7ae4ca"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="10" isBold="true"/></textElement><textFieldExpression><![CDATA["Estado: " + $F{estado}]]></textFieldExpression></textField></band></groupHeader><groupFooter><band height="20"><line><reportElement x="0" y="1" width="802" height="1" forecolor="#9DB6CF" uuid="1c707415-4ff8-4fd1-89cd-9d4af05692e7"/><graphicElement><pen lineWidth="1.0"/></graphicElement></line><textField isBlankWhenNull="true"><reportElement x="0" y="2" width="802" height="16" forecolor="#1F4E79" uuid="3534fd3e-57f8-470d-9a2f-79966325abe5"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Right" verticalAlignment="Middle"><font fontName="SansSerif" size="9" isBold="true"/></textElement><textFieldExpression><![CDATA["Envíos en " + $F{estado} + ": " + $V{Estado_COUNT}]]></textFieldExpression></textField></band></groupFooter></group>
-<background><band splitType="Stretch"/></background>
-<title><band height="72" splitType="Stretch"><rectangle><reportElement mode="Opaque" x="0" y="0" width="802" height="62" forecolor="#1F4E79" backcolor="#1F4E79" uuid="4c869cd0-3589-47cc-86d1-90e54f23611d"/></rectangle><staticText><reportElement x="10" y="4" width="622" height="16" forecolor="#C8DCF0" uuid="cae240a9-0da5-40eb-8ec6-b3fb60146094"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="9" isBold="false"/></textElement><text><![CDATA[LogiRuta Perú S.A.C. · Plataforma de logística y seguimiento]]></text></staticText><staticText><reportElement x="10" y="20" width="622" height="24" forecolor="#FFFFFF" uuid="0e2e185e-9ce4-4864-b970-6526d735afdb"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="17" isBold="true"/></textElement><text><![CDATA[LISTADO DE ENVÍOS]]></text></staticText><textField isBlankWhenNull="true"><reportElement x="10" y="44" width="622" height="16" forecolor="#E1ECF7" uuid="d18edbdf-b6b1-483e-95da-644fb16cc21a"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="9" isBold="false"/></textElement><textFieldExpression><![CDATA[$P{P_ESTADO} == null ? "Todos los estados" : "Estado: " + $P{P_ESTADO}]]></textFieldExpression></textField><textField pattern="dd/MM/yyyy HH:mm" isBlankWhenNull="true"><reportElement x="632" y="8" width="160" height="16" forecolor="#FFFFFF" uuid="9fadb64f-091e-4cb4-8368-f3673c3520e6"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Right" verticalAlignment="Middle"><font fontName="SansSerif" size="9" isBold="false"/></textElement><textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression></textField><staticText><reportElement x="632" y="26" width="160" height="16" forecolor="#C8DCF0" uuid="f4efe749-e30d-415d-83d4-1fb3e7a4c0ac"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Right" verticalAlignment="Middle"><font fontName="SansSerif" size="8" isBold="false"/></textElement><text><![CDATA[AppLogistica · JasperReports]]></text></staticText></band></title>
-<columnHeader><band height="22" splitType="Stretch"><rectangle><reportElement mode="Opaque" x="0" y="0" width="802" height="22" forecolor="#1F4E79" backcolor="#1F4E79" uuid="4e79302a-19fa-4552-8e3e-0ca302af4f22"/></rectangle><staticText><reportElement x="0" y="0" width="75" height="22" forecolor="#FFFFFF" uuid="f0f94212-359e-4481-8ce5-687477eed780"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="9" isBold="true"/></textElement><text><![CDATA[Código]]></text></staticText><staticText><reportElement x="75" y="0" width="170" height="22" forecolor="#FFFFFF" uuid="8a45a5dd-a0b7-4715-a26a-a7df6b0e28bc"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="9" isBold="true"/></textElement><text><![CDATA[Cliente]]></text></staticText><staticText><reportElement x="245" y="0" width="95" height="22" forecolor="#FFFFFF" uuid="37043c96-2b36-41d2-81e1-d7914e4aa86d"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="9" isBold="true"/></textElement><text><![CDATA[Servicio]]></text></staticText><staticText><reportElement x="340" y="0" width="135" height="22" forecolor="#FFFFFF" uuid="51842853-ee2e-4780-8a2f-dfb4ec7eb80e"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="9" isBold="true"/></textElement><text><![CDATA[Destinatario]]></text></staticText><staticText><reportElement x="475" y="0" width="95" height="22" forecolor="#FFFFFF" uuid="733c5eae-bec8-4d04-89c5-f890e4735804"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="9" isBold="true"/></textElement><text><![CDATA[Distrito]]></text></staticText><staticText><reportElement x="570" y="0" width="55" height="22" forecolor="#FFFFFF" uuid="2a855741-a28c-465f-a572-2655fde70dd9"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Right" verticalAlignment="Middle"><font fontName="SansSerif" size="9" isBold="true"/></textElement><text><![CDATA[Peso kg]]></text></staticText><staticText><reportElement x="625" y="0" width="60" height="22" forecolor="#FFFFFF" uuid="153f5463-c595-4fc4-b6c4-4d4a8ec49809"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Right" verticalAlignment="Middle"><font fontName="SansSerif" size="9" isBold="true"/></textElement><text><![CDATA[Costo S/]]></text></staticText><staticText><reportElement x="685" y="0" width="62" height="22" forecolor="#FFFFFF" uuid="d8655234-de34-457a-b6e0-fded75727906"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="SansSerif" size="9" isBold="true"/></textElement><text><![CDATA[Registro]]></text></staticText><staticText><reportElement x="747" y="0" width="55" height="22" forecolor="#FFFFFF" uuid="ff97f8c7-5718-4b17-ad27-58fce676cf50"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="SansSerif" size="9" isBold="true"/></textElement><text><![CDATA[Estimada]]></text></staticText></band></columnHeader>
-<detail><band height="18" splitType="Stretch"><frame><reportElement style="Fila" x="0" y="0" width="802" height="18" uuid="8ca32b30-3c6d-4940-a461-acd514e570e3"/><textField textAdjust="StretchHeight" isBlankWhenNull="true"><reportElement x="0" y="0" width="75" height="18" uuid="ff48272f-5b97-48a5-a4c3-79b19e4ec0c1"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="9" isBold="false"/></textElement><textFieldExpression><![CDATA[$F{codigo}]]></textFieldExpression></textField><textField textAdjust="StretchHeight" isBlankWhenNull="true"><reportElement x="75" y="0" width="170" height="18" uuid="d5ad0042-c688-4e5f-9ef8-84d929ef5d22"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="9" isBold="false"/></textElement><textFieldExpression><![CDATA[$F{cliente}]]></textFieldExpression></textField><textField textAdjust="StretchHeight" isBlankWhenNull="true"><reportElement x="245" y="0" width="95" height="18" uuid="b68e9bdb-fd4c-41fb-b030-be514fef786a"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="9" isBold="false"/></textElement><textFieldExpression><![CDATA[$F{servicio}]]></textFieldExpression></textField><textField textAdjust="StretchHeight" isBlankWhenNull="true"><reportElement x="340" y="0" width="135" height="18" uuid="03a05d01-6c30-4138-b37c-afddaeaa1ddb"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="9" isBold="false"/></textElement><textFieldExpression><![CDATA[$F{destinatario}]]></textFieldExpression></textField><textField textAdjust="StretchHeight" isBlankWhenNull="true"><reportElement x="475" y="0" width="95" height="18" uuid="98c004aa-ebcb-4b9d-9842-16f09b8ef3d3"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="9" isBold="false"/></textElement><textFieldExpression><![CDATA[$F{distrito}]]></textFieldExpression></textField><textField textAdjust="StretchHeight" pattern="#,##0.00" isBlankWhenNull="true"><reportElement x="570" y="0" width="55" height="18" uuid="d7713951-63f6-4dd4-8746-b007a25c752b"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Right" verticalAlignment="Middle"><font fontName="SansSerif" size="9" isBold="false"/></textElement><textFieldExpression><![CDATA[$F{peso_kg}]]></textFieldExpression></textField><textField textAdjust="StretchHeight" pattern="#,##0.00" isBlankWhenNull="true"><reportElement x="625" y="0" width="60" height="18" uuid="10c225e8-2ec7-4ffe-9f6f-92597d4d7df5"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Right" verticalAlignment="Middle"><font fontName="SansSerif" size="9" isBold="false"/></textElement><textFieldExpression><![CDATA[$F{costo}]]></textFieldExpression></textField><textField textAdjust="StretchHeight" pattern="dd/MM/yyyy" isBlankWhenNull="true"><reportElement x="685" y="0" width="62" height="18" uuid="c84c797b-3f62-401a-aab4-0c81f39a7d6a"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="SansSerif" size="9" isBold="false"/></textElement><textFieldExpression><![CDATA[$F{fecha_registro}]]></textFieldExpression></textField><textField textAdjust="StretchHeight" pattern="dd/MM/yy" isBlankWhenNull="true"><reportElement x="747" y="0" width="55" height="18" uuid="31357156-1d6d-4c3d-9353-0242f89e45d5"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="SansSerif" size="9" isBold="false"/></textElement><textFieldExpression><![CDATA[$F{fecha_estimada}]]></textFieldExpression></textField></frame></band></detail>
-<pageFooter><band height="22" splitType="Stretch"><line><reportElement x="0" y="2" width="802" height="1" forecolor="#1F4E79" uuid="e66ce76d-96e7-4b1c-9678-dc282b4da191"/><graphicElement><pen lineWidth="1.0"/></graphicElement></line><staticText><reportElement x="0" y="4" width="300" height="16" forecolor="#666666" uuid="dc2e54f7-8116-4903-9b42-ef693c9ff8c2"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="8" isBold="false"/></textElement><text><![CDATA[Documento generado por AppLogistica (uso académico)]]></text></staticText><textField isBlankWhenNull="true"><reportElement x="602" y="4" width="150" height="16" forecolor="#666666" uuid="16a99994-5252-4e02-9acf-822470fbed11"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Right" verticalAlignment="Middle"><font fontName="SansSerif" size="8" isBold="false"/></textElement><textFieldExpression><![CDATA["Página " + $V{PAGE_NUMBER} + " de"]]></textFieldExpression></textField><textField evaluationTime="Report"><reportElement x="752" y="4" width="50" height="16" forecolor="#666666" uuid="2338dc6e-7c16-4419-bd1a-039eb7232d6d"/><textElement verticalAlignment="Middle"><font fontName="SansSerif" size="8"/></textElement><textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression></textField></band></pageFooter>
-<summary><band height="40" splitType="Stretch"><line><reportElement x="0" y="4" width="802" height="1" forecolor="#1F4E79" uuid="70def1cb-7e66-4bb2-bf58-e11bef0faeef"/><graphicElement><pen lineWidth="1.0"/></graphicElement></line><textField isBlankWhenNull="true"><reportElement x="0" y="8" width="802" height="18" forecolor="#1F4E79" uuid="8000ae16-d835-44e3-a589-864a942e47fa"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Right" verticalAlignment="Middle"><font fontName="SansSerif" size="10" isBold="true"/></textElement><textFieldExpression><![CDATA["Total de envíos: " + $V{TOTAL_REG} + "    Facturado: S/ " + new java.text.DecimalFormat("#,##0.00").format($V{TOTAL_COSTO})]]></textFieldExpression></textField></band></summary>
-<noData><band height="100"><rectangle><reportElement mode="Opaque" x="0" y="0" width="802" height="62" forecolor="#1F4E79" backcolor="#1F4E79" uuid="319a207a-fae0-4445-8324-a1f9603235cb"/></rectangle><staticText><reportElement x="10" y="4" width="782" height="16" forecolor="#C8DCF0" uuid="2048cb06-8d6e-41f9-9ca5-8d141438c33e"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="9" isBold="false"/></textElement><text><![CDATA[LogiRuta Perú S.A.C. · Plataforma de logística y seguimiento]]></text></staticText><staticText><reportElement x="10" y="20" width="782" height="24" forecolor="#FFFFFF" uuid="557bfdba-c73a-4bad-8d49-e778bad97f0d"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="17" isBold="true"/></textElement><text><![CDATA[LISTADO DE ENVÍOS]]></text></staticText><staticText><reportElement x="0" y="72" width="802" height="20" forecolor="#999999" uuid="ae210d39-a305-429d-8cb1-175a69a5a545"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="SansSerif" size="11" isBold="false"/></textElement><text><![CDATA[No hay datos para mostrar con los filtros elegidos.]]></text></staticText></band></noData>
+
+    <field name="codigo" class="java.lang.String"/>
+    <field name="cliente" class="java.lang.String"/>
+    <field name="servicio" class="java.lang.String"/>
+    <field name="destinatario" class="java.lang.String"/>
+    <field name="distrito" class="java.lang.String"/>
+    <field name="peso_kg" class="java.math.BigDecimal"/>
+    <field name="costo" class="java.math.BigDecimal"/>
+    <field name="estado" class="java.lang.String"/>
+    <field name="fecha_registro" class="java.sql.Timestamp"/>
+    <field name="fecha_estimada" class="java.sql.Date"/>
+
+    <variable name="TOTAL_REG" class="java.lang.Integer" resetType="Report" calculation="Count">
+        <variableExpression><![CDATA[$F{codigo}]]></variableExpression>
+        <initialValueExpression><![CDATA[Integer.valueOf(0)]]></initialValueExpression>
+    </variable>
+    <variable name="TOTAL_COSTO" class="java.math.BigDecimal" resetType="Report" calculation="Sum">
+        <variableExpression><![CDATA[$F{costo}]]></variableExpression>
+        <initialValueExpression><![CDATA[java.math.BigDecimal.ZERO]]></initialValueExpression>
+    </variable>
+
+    <group name="Estado">
+        <groupExpression><![CDATA[$F{estado}]]></groupExpression>
+        <groupHeader>
+            <band height="22">
+                <rectangle>
+                    <reportElement mode="Opaque" x="0" y="4" width="802" height="18" forecolor="#DEEAF6" backcolor="#DEEAF6" uuid="5eaaf5a4-0287-443f-9154-74fa0ea83716"/>
+                </rectangle>
+                <textField isBlankWhenNull="true">
+                    <reportElement x="0" y="4" width="802" height="18" forecolor="#1F4E79" uuid="03bc18fe-bb1a-47b2-bc9f-59620c7ae4ca"/>
+                    <box leftPadding="3" rightPadding="3"/>
+                    <textElement textAlignment="Left" verticalAlignment="Middle">
+                        <font fontName="SansSerif" size="10" isBold="true"/>
+                    </textElement>
+                    <textFieldExpression><![CDATA["Estado: " + $F{estado}]]></textFieldExpression>
+                </textField>
+            </band>
+        </groupHeader>
+        <groupFooter>
+            <band height="20">
+                <line>
+                    <reportElement x="0" y="1" width="802" height="1" forecolor="#9DB6CF" uuid="1c707415-4ff8-4fd1-89cd-9d4af05692e7"/>
+                    <graphicElement>
+                        <pen lineWidth="1.0"/>
+                    </graphicElement>
+                </line>
+                <textField isBlankWhenNull="true">
+                    <reportElement x="0" y="2" width="802" height="16" forecolor="#1F4E79" uuid="3534fd3e-57f8-470d-9a2f-79966325abe5"/>
+                    <box leftPadding="3" rightPadding="3"/>
+                    <textElement textAlignment="Right" verticalAlignment="Middle">
+                        <font fontName="SansSerif" size="9" isBold="true"/>
+                    </textElement>
+                    <textFieldExpression><![CDATA["Envíos en " + $F{estado} + ": " + $V{Estado_COUNT}]]></textFieldExpression>
+                </textField>
+            </band>
+        </groupFooter>
+    </group>
+
+    <background>
+        <band splitType="Stretch"/>
+    </background>
+
+    <title>
+        <band height="72" splitType="Stretch">
+            <rectangle>
+                <reportElement mode="Opaque" x="0" y="0" width="802" height="62" forecolor="#1F4E79" backcolor="#1F4E79" uuid="4c869cd0-3589-47cc-86d1-90e54f23611d"/>
+            </rectangle>
+            <staticText>
+                <reportElement x="10" y="4" width="622" height="16" forecolor="#C8DCF0" uuid="cae240a9-0da5-40eb-8ec6-b3fb60146094"/>
+                <box leftPadding="3" rightPadding="3"/>
+                <textElement textAlignment="Left" verticalAlignment="Middle">
+                    <font fontName="SansSerif" size="9" isBold="false"/>
+                </textElement>
+                <text><![CDATA[LogiRuta Perú S.A.C. · Plataforma de logística y seguimiento]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="10" y="20" width="622" height="24" forecolor="#FFFFFF" uuid="0e2e185e-9ce4-4864-b970-6526d735afdb"/>
+                <box leftPadding="3" rightPadding="3"/>
+                <textElement textAlignment="Left" verticalAlignment="Middle">
+                    <font fontName="SansSerif" size="17" isBold="true"/>
+                </textElement>
+                <text><![CDATA[LISTADO DE ENVÍOS]]></text>
+            </staticText>
+            <textField isBlankWhenNull="true">
+                <reportElement x="10" y="44" width="622" height="16" forecolor="#E1ECF7" uuid="d18edbdf-b6b1-483e-95da-644fb16cc21a"/>
+                <box leftPadding="3" rightPadding="3"/>
+                <textElement textAlignment="Left" verticalAlignment="Middle">
+                    <font fontName="SansSerif" size="9" isBold="false"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{P_ESTADO} == null ? "Todos los estados" : "Estado: " + $P{P_ESTADO}]]></textFieldExpression>
+            </textField>
+            <textField pattern="dd/MM/yyyy HH:mm" isBlankWhenNull="true">
+                <reportElement x="632" y="8" width="160" height="16" forecolor="#FFFFFF" uuid="9fadb64f-091e-4cb4-8368-f3673c3520e6"/>
+                <box leftPadding="3" rightPadding="3"/>
+                <textElement textAlignment="Right" verticalAlignment="Middle">
+                    <font fontName="SansSerif" size="9" isBold="false"/>
+                </textElement>
+                <textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement x="632" y="26" width="160" height="16" forecolor="#C8DCF0" uuid="f4efe749-e30d-415d-83d4-1fb3e7a4c0ac"/>
+                <box leftPadding="3" rightPadding="3"/>
+                <textElement textAlignment="Right" verticalAlignment="Middle">
+                    <font fontName="SansSerif" size="8" isBold="false"/>
+                </textElement>
+                <text><![CDATA[AppLogistica · JasperReports]]></text>
+            </staticText>
+        </band>
+    </title>
+
+    <columnHeader>
+        <band height="22" splitType="Stretch">
+            <rectangle>
+                <reportElement mode="Opaque" x="0" y="0" width="802" height="22" forecolor="#1F4E79" backcolor="#1F4E79" uuid="4e79302a-19fa-4552-8e3e-0ca302af4f22"/>
+            </rectangle>
+            <staticText>
+                <reportElement x="0" y="0" width="75" height="22" forecolor="#FFFFFF" uuid="f0f94212-359e-4481-8ce5-687477eed780"/>
+                <box leftPadding="3" rightPadding="3"/>
+                <textElement textAlignment="Left" verticalAlignment="Middle">
+                    <font fontName="SansSerif" size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Código]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="75" y="0" width="170" height="22" forecolor="#FFFFFF" uuid="8a45a5dd-a0b7-4715-a26a-a7df6b0e28bc"/>
+                <box leftPadding="3" rightPadding="3"/>
+                <textElement textAlignment="Left" verticalAlignment="Middle">
+                    <font fontName="SansSerif" size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Cliente]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="245" y="0" width="95" height="22" forecolor="#FFFFFF" uuid="37043c96-2b36-41d2-81e1-d7914e4aa86d"/>
+                <box leftPadding="3" rightPadding="3"/>
+                <textElement textAlignment="Left" verticalAlignment="Middle">
+                    <font fontName="SansSerif" size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Servicio]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="340" y="0" width="135" height="22" forecolor="#FFFFFF" uuid="51842853-ee2e-4780-8a2f-dfb4ec7eb80e"/>
+                <box leftPadding="3" rightPadding="3"/>
+                <textElement textAlignment="Left" verticalAlignment="Middle">
+                    <font fontName="SansSerif" size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Destinatario]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="475" y="0" width="95" height="22" forecolor="#FFFFFF" uuid="733c5eae-bec8-4d04-89c5-f890e4735804"/>
+                <box leftPadding="3" rightPadding="3"/>
+                <textElement textAlignment="Left" verticalAlignment="Middle">
+                    <font fontName="SansSerif" size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Distrito]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="570" y="0" width="55" height="22" forecolor="#FFFFFF" uuid="2a855741-a28c-465f-a572-2655fde70dd9"/>
+                <box leftPadding="3" rightPadding="3"/>
+                <textElement textAlignment="Right" verticalAlignment="Middle">
+                    <font fontName="SansSerif" size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Peso kg]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="625" y="0" width="60" height="22" forecolor="#FFFFFF" uuid="153f5463-c595-4fc4-b6c4-4d4a8ec49809"/>
+                <box leftPadding="3" rightPadding="3"/>
+                <textElement textAlignment="Right" verticalAlignment="Middle">
+                    <font fontName="SansSerif" size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Costo S/]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="685" y="0" width="62" height="22" forecolor="#FFFFFF" uuid="d8655234-de34-457a-b6e0-fded75727906"/>
+                <box leftPadding="3" rightPadding="3"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font fontName="SansSerif" size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Registro]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="747" y="0" width="55" height="22" forecolor="#FFFFFF" uuid="ff97f8c7-5718-4b17-ad27-58fce676cf50"/>
+                <box leftPadding="3" rightPadding="3"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font fontName="SansSerif" size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Estimada]]></text>
+            </staticText>
+        </band>
+    </columnHeader>
+
+    <detail>
+        <band height="18" splitType="Stretch">
+            <frame>
+                <reportElement mode="Opaque" x="0" y="0" width="802" height="18" backcolor="#FFFFFF" uuid="8ca32b30-3c6d-4940-a461-acd514e570e3">
+                    <property name="com.jaspersoft.studio.unit.height" value="px"/>
+                </reportElement>
+                <textField textAdjust="StretchHeight" isBlankWhenNull="true">
+                    <reportElement x="0" y="0" width="75" height="18" uuid="ff48272f-5b97-48a5-a4c3-79b19e4ec0c1"/>
+                    <box leftPadding="3" rightPadding="3"/>
+                    <textElement textAlignment="Left" verticalAlignment="Middle">
+                        <font fontName="SansSerif" size="9" isBold="false"/>
+                    </textElement>
+                    <textFieldExpression><![CDATA[$F{codigo}]]></textFieldExpression>
+                </textField>
+                <textField textAdjust="StretchHeight" isBlankWhenNull="true">
+                    <reportElement x="75" y="0" width="170" height="18" uuid="d5ad0042-c688-4e5f-9ef8-84d929ef5d22"/>
+                    <box leftPadding="3" rightPadding="3"/>
+                    <textElement textAlignment="Left" verticalAlignment="Middle">
+                        <font fontName="SansSerif" size="9" isBold="false"/>
+                    </textElement>
+                    <textFieldExpression><![CDATA[$F{cliente}]]></textFieldExpression>
+                </textField>
+                <textField textAdjust="StretchHeight" isBlankWhenNull="true">
+                    <reportElement x="245" y="0" width="95" height="18" uuid="b68e9bdb-fd4c-41fb-b030-be514fef786a"/>
+                    <box leftPadding="3" rightPadding="3"/>
+                    <textElement textAlignment="Left" verticalAlignment="Middle">
+                        <font fontName="SansSerif" size="9" isBold="false"/>
+                    </textElement>
+                    <textFieldExpression><![CDATA[$F{servicio}]]></textFieldExpression>
+                </textField>
+                <textField textAdjust="StretchHeight" isBlankWhenNull="true">
+                    <reportElement x="340" y="0" width="135" height="18" uuid="03a05d01-6c30-4138-b37c-afddaeaa1ddb"/>
+                    <box leftPadding="3" rightPadding="3"/>
+                    <textElement textAlignment="Left" verticalAlignment="Middle">
+                        <font fontName="SansSerif" size="9" isBold="false"/>
+                    </textElement>
+                    <textFieldExpression><![CDATA[$F{destinatario}]]></textFieldExpression>
+                </textField>
+                <textField textAdjust="StretchHeight" isBlankWhenNull="true">
+                    <reportElement x="475" y="0" width="95" height="18" uuid="98c004aa-ebcb-4b9d-9842-16f09b8ef3d3"/>
+                    <box leftPadding="3" rightPadding="3"/>
+                    <textElement textAlignment="Left" verticalAlignment="Middle">
+                        <font fontName="SansSerif" size="9" isBold="false"/>
+                    </textElement>
+                    <textFieldExpression><![CDATA[$F{distrito}]]></textFieldExpression>
+                </textField>
+                <textField textAdjust="StretchHeight" pattern="#,##0.00" isBlankWhenNull="true">
+                    <reportElement x="570" y="0" width="55" height="18" uuid="d7713951-63f6-4dd4-8746-b007a25c752b"/>
+                    <box leftPadding="3" rightPadding="3"/>
+                    <textElement textAlignment="Right" verticalAlignment="Middle">
+                        <font fontName="SansSerif" size="9" isBold="false"/>
+                    </textElement>
+                    <textFieldExpression><![CDATA[$F{peso_kg}]]></textFieldExpression>
+                </textField>
+                <textField textAdjust="StretchHeight" pattern="#,##0.00" isBlankWhenNull="true">
+                    <reportElement x="625" y="0" width="60" height="18" uuid="10c225e8-2ec7-4ffe-9f6f-92597d4d7df5"/>
+                    <box leftPadding="3" rightPadding="3"/>
+                    <textElement textAlignment="Right" verticalAlignment="Middle">
+                        <font fontName="SansSerif" size="9" isBold="false"/>
+                    </textElement>
+                    <textFieldExpression><![CDATA[$F{costo}]]></textFieldExpression>
+                </textField>
+                <textField textAdjust="StretchHeight" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+                    <reportElement x="685" y="0" width="62" height="18" uuid="c84c797b-3f62-401a-aab4-0c81f39a7d6a"/>
+                    <box leftPadding="3" rightPadding="3"/>
+                    <textElement textAlignment="Center" verticalAlignment="Middle">
+                        <font fontName="SansSerif" size="9" isBold="false"/>
+                    </textElement>
+                    <textFieldExpression><![CDATA[$F{fecha_registro}]]></textFieldExpression>
+                </textField>
+                <textField textAdjust="StretchHeight" pattern="dd/MM/yy" isBlankWhenNull="true">
+                    <reportElement x="747" y="0" width="55" height="18" uuid="31357156-1d6d-4c3d-9353-0242f89e45d5"/>
+                    <box leftPadding="3" rightPadding="3"/>
+                    <textElement textAlignment="Center" verticalAlignment="Middle">
+                        <font fontName="SansSerif" size="9" isBold="false"/>
+                    </textElement>
+                    <textFieldExpression><![CDATA[$F{fecha_estimada}]]></textFieldExpression>
+                </textField>
+            </frame>
+        </band>
+    </detail>
+
+    <pageFooter>
+        <band height="22" splitType="Stretch">
+            <line>
+                <reportElement x="0" y="2" width="802" height="1" forecolor="#1F4E79" uuid="e66ce76d-96e7-4b1c-9678-dc282b4da191"/>
+                <graphicElement>
+                    <pen lineWidth="1.0"/>
+                </graphicElement>
+            </line>
+            <staticText>
+                <reportElement x="0" y="4" width="300" height="16" forecolor="#666666" uuid="dc2e54f7-8116-4903-9b42-ef693c9ff8c2"/>
+                <box leftPadding="3" rightPadding="3"/>
+                <textElement textAlignment="Left" verticalAlignment="Middle">
+                    <font fontName="SansSerif" size="8" isBold="false"/>
+                </textElement>
+                <text><![CDATA[Documento generado por AppLogistica (uso académico)]]></text>
+            </staticText>
+            <textField isBlankWhenNull="true">
+                <reportElement x="602" y="4" width="150" height="16" forecolor="#666666" uuid="16a99994-5252-4e02-9acf-822470fbed11"/>
+                <box leftPadding="3" rightPadding="3"/>
+                <textElement textAlignment="Right" verticalAlignment="Middle">
+                    <font fontName="SansSerif" size="8" isBold="false"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Página " + $V{PAGE_NUMBER} + " de"]]></textFieldExpression>
+            </textField>
+            <textField evaluationTime="Report">
+                <reportElement x="752" y="4" width="50" height="16" forecolor="#666666" uuid="2338dc6e-7c16-4419-bd1a-039eb7232d6d"/>
+                <textElement verticalAlignment="Middle">
+                    <font fontName="SansSerif" size="8"/>
+                </textElement>
+                <textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+            </textField>
+        </band>
+    </pageFooter>
+
+    <summary>
+        <band height="220" splitType="Stretch">
+            <line>
+                <reportElement x="0" y="4" width="802" height="1" forecolor="#1F4E79" uuid="b5d80b4f-cc99-4425-800a-ab52ece7f18c"/>
+                <graphicElement>
+                    <pen lineWidth="1.0"/>
+                </graphicElement>
+            </line>
+            
+            <barChart>
+                <chart evaluationTime="Report">
+                    <reportElement x="0" y="15" width="802" height="195" uuid="8b2c3d4e-5f6a-7b8c-9d0e-1f2a3b4c5d6e">
+                        <printWhenExpression><![CDATA[$P{P_ESTADO} == null || $P{P_ESTADO}.toString().isEmpty()]]></printWhenExpression>
+                    </reportElement>
+                    <chartTitle>
+                        <titleExpression><![CDATA["Cantidad de Envíos por Estado"]]></titleExpression>
+                    </chartTitle>
+                    <chartSubtitle/>
+                    <chartLegend/>
+                </chart>
+                <categoryDataset>
+                    <categorySeries>
+                        <seriesExpression><![CDATA["Envíos"]]></seriesExpression>
+                        <categoryExpression><![CDATA[$F{estado}]]></categoryExpression>
+                        <valueExpression><![CDATA[$V{Estado_COUNT}]]></valueExpression>
+                    </categorySeries>
+                </categoryDataset>
+                <barPlot>
+                    <plot/>
+                    <itemLabel/>
+                    <categoryAxisFormat>
+                        <axisFormat/>
+                    </categoryAxisFormat>
+                    <valueAxisFormat>
+                        <axisFormat/>
+                    </valueAxisFormat>
+                </barPlot>
+            </barChart>
+        </band>
+    </summary>
+
+    <noData>
+        <band height="100">
+            <rectangle>
+                <reportElement mode="Opaque" x="0" y="0" width="802" height="62" forecolor="#1F4E79" backcolor="#1F4E79" uuid="319a207a-fae0-4445-8324-a1f9603235cb"/>
+            </rectangle>
+            <staticText>
+                <reportElement x="10" y="4" width="782" height="16" forecolor="#C8DCF0" uuid="2048cb06-8d6e-41f9-9ca5-8d141438c33e"/>
+                <box leftPadding="3" rightPadding="3"/>
+                <textElement textAlignment="Left" verticalAlignment="Middle">
+                    <font fontName="SansSerif" size="9" isBold="false"/>
+                </textElement>
+                <text><![CDATA[LogiRuta Perú S.A.C. · Plataforma de logística y seguimiento]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="10" y="20" width="782" height="24" forecolor="#FFFFFF" uuid="557bfdba-c73a-4bad-8d49-e778bad97f0d"/>
+                <box leftPadding="3" rightPadding="3"/>
+                <textElement textAlignment="Left" verticalAlignment="Middle">
+                    <font fontName="SansSerif" size="17" isBold="true"/>
+                </textElement>
+                <text><![CDATA[LISTADO DE ENVÍOS]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="0" y="72" width="802" height="20" forecolor="#999999" uuid="ae210d39-a305-429d-8cb1-175a69a5a545"/>
+                <box leftPadding="3" rightPadding="3"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font fontName="SansSerif" size="11" isBold="false"/>
+                </textElement>
+                <text><![CDATA[No hay datos para mostrar con los filtros elegidos.]]></text>
+            </staticText>
+        </band>
+    </noData>
 </jasperReport>

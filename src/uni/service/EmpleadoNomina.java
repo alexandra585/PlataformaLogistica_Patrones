@@ -1,6 +1,8 @@
 package uni.service;
 
 import uni.entity.EmpleadoTo;
+import uni.util.DescuentoFactory;
+import uni.util.ParametrosPlanilla;
 
 /**
  * Sesión 13 - un solo objeto con dos roles:
@@ -10,6 +12,11 @@ import uni.entity.EmpleadoTo;
  *    (sueldo + área) y se restaura a partir de ellos.
  * Equivale a la clase Empleado / EmpleadoOriginator del ejemplo de clase,
  * pero persiste los cambios en MySQL mediante IRegistroRemuneracion.
+ *
+ * Sesión 17 - GRASP EXPERTO EN INFORMACIÓN: como conoce el sueldo y el régimen
+ * pensionario del empleado, es la clase responsable de calcular las horas
+ * extras, los descuentos y el sueldo neto. El descuento de pensión lo delega
+ * polimórficamente en su DescuentoStrategy (AFP o SNP).
  */
 public class EmpleadoNomina {
 
@@ -21,6 +28,7 @@ public class EmpleadoNomina {
     private String area;
     private final IRegistroRemuneracion registro;
     private final String usuario;
+    private DescuentoStrategy regimen;   // Polimorfismo (AFP | SNP)
 
     public EmpleadoNomina(EmpleadoTo e, IRegistroRemuneracion registro, String usuario) {
         this.idempleado = e.getIdempleado();
@@ -29,6 +37,7 @@ public class EmpleadoNomina {
         this.area = e.getArea();
         this.registro = registro;
         this.usuario = usuario;
+        this.regimen = DescuentoFactory.crear(e.getRegimen() == null ? "AFP" : e.getRegimen());
     }
 
     // ------------------------------------------------ Receiver (Command)
@@ -57,6 +66,41 @@ public class EmpleadoNomina {
             throw new IllegalArgumentException("Indique el área.");
         }
         aplicar(sueldo, nuevaArea.trim().toUpperCase(), "CAMBIO_AREA");
+    }
+
+    // ------------------------------------------------ Experto en información (GRASP, Sesión 17)
+
+    /** Monto de horas extras = sueldo básico x horas / 240 (fórmula del caso de clase). */
+    public double calcularMontoHorasExtras(int horas) {
+        if (horas < 0) {
+            throw new IllegalArgumentException("Las horas extras no pueden ser negativas.");
+        }
+        return redondear(sueldo * horas / ParametrosPlanilla.HORAS_MES);
+    }
+
+    /** Aporte pensionario: lo calcula la estrategia del régimen (polimorfismo). */
+    public double calcularAportePension() {
+        return regimen.calcularDescuento(sueldo);
+    }
+
+    public double calcularDescuentoSalud() {
+        return redondear(sueldo * ParametrosPlanilla.TASA_SALUD);
+    }
+
+    public double calcularTotalDescuentos() {
+        return redondear(calcularAportePension() + calcularDescuentoSalud());
+    }
+
+    public double calcularSueldoNeto(int horas) {
+        return redondear(sueldo + calcularMontoHorasExtras(horas) - calcularTotalDescuentos());
+    }
+
+    public DescuentoStrategy getRegimen() {
+        return regimen;
+    }
+
+    public void setRegimen(DescuentoStrategy regimen) {
+        this.regimen = regimen;
     }
 
     // ------------------------------------------------ Originator (Memento)

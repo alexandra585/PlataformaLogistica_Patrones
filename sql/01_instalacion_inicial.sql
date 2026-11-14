@@ -11,6 +11,8 @@
 -- Actualización Sesión 13:
 --   + empleados.sueldo / empleados.area y tabla historial_remuneracion (Command + Memento del empleado)
 --   + manifiesto de ejemplo MF-2026-0458 para el reporte JasperReports
+-- Actualización Sesiones 14 y 17:
+--   + empleados.regimen_pensionario (AFP/SNP) y tabla boletas_pago (GRASP: Experto, Fabricación pura, Polimorfismo)
 -- Ejecutar completo en MySQL Workbench (Ctrl+Shift+Enter) o con:
 --   mysql -u root -p < sql/01_instalacion_inicial.sql
 -- =====================================================
@@ -40,6 +42,7 @@ FLUSH PRIVILEGES;
 
 SET FOREIGN_KEY_CHECKS = 0;
 
+DROP TABLE IF EXISTS boletas_pago;
 DROP TABLE IF EXISTS historial_remuneracion;
 DROP TABLE IF EXISTS historial_laboral;
 DROP TABLE IF EXISTS comandos_log;
@@ -124,6 +127,7 @@ CREATE TABLE empleados (
     estado_laboral ENUM('ACTIVO','VACACIONES','INACTIVO') NOT NULL DEFAULT 'ACTIVO',  -- patrón State
     sueldo DECIMAL(10,2) NOT NULL DEFAULT 1500.00,   -- Command/Memento (Sesión 13)
     area VARCHAR(40) NOT NULL DEFAULT 'OPERACIONES',  -- Command/Memento (Sesión 13)
+    regimen_pensionario ENUM('AFP','SNP') NOT NULL DEFAULT 'AFP',  -- Polimorfismo GRASP (Sesión 17)
     CONSTRAINT ck_empleados_sueldo CHECK (sueldo > 0),
     CONSTRAINT fk_empleados_sucursal FOREIGN KEY (idsucursal) REFERENCES sucursales(idsucursal)
 ) ENGINE=InnoDB;
@@ -448,6 +452,32 @@ CREATE TABLE historial_remuneracion (
 ) ENGINE=InnoDB;
 
 -- =====================================================
+-- 17d. BOLETAS DE PAGO (GRASP, Sesión 17)
+-- La genera GeneradorBoleta (Fabricación pura) con los montos que calcula
+-- EmpleadoNomina (Experto en información) y el régimen polimórfico AFP/SNP.
+-- =====================================================
+
+CREATE TABLE boletas_pago (
+    idboleta INT PRIMARY KEY AUTO_INCREMENT,
+    idempleado CHAR(5) NOT NULL,
+    periodo CHAR(7) NOT NULL,                 -- AAAA-MM
+    sueldo_basico DECIMAL(10,2) NOT NULL,
+    horas_extras INT NOT NULL DEFAULT 0,
+    monto_horas_extras DECIMAL(10,2) NOT NULL,
+    regimen VARCHAR(5) NOT NULL,
+    aporte_pension DECIMAL(10,2) NOT NULL,
+    descuento_salud DECIMAL(10,2) NOT NULL,
+    total_ingresos DECIMAL(10,2) NOT NULL,
+    total_descuentos DECIMAL(10,2) NOT NULL,
+    sueldo_neto DECIMAL(10,2) NOT NULL,
+    usuario CHAR(5),
+    fecha_emision DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT uq_boleta_periodo UNIQUE (idempleado, periodo),
+    CONSTRAINT ck_boleta_horas CHECK (horas_extras >= 0),
+    CONSTRAINT fk_bol_empleado FOREIGN KEY (idempleado) REFERENCES empleados(idempleado)
+) ENGINE=InnoDB;
+
+-- =====================================================
 -- 18. DATOS DE PRUEBA
 -- =====================================================
 
@@ -469,13 +499,13 @@ INSERT INTO zonas (nombre, idsucursal) VALUES
 
 -- Claves de prueba: admin -> admin | demás usuarios -> 123456
 INSERT INTO empleados VALUES
-('E0001','Administrador','Sistema','admin@logiruta.pe','admin',SHA2('admin',256),'ADMINISTRADOR','S001',1,'ACTIVO',6500.00,'GERENCIA'),
-('E0002','Rosa','Quispe','rquispe@logiruta.pe','rquispe',SHA2('123456',256),'AGENTE_VENTANILLA','S001',1,'ACTIVO',1800.00,'ATENCION AL CLIENTE'),
-('E0003','Luis','Mendoza','lmendoza@logiruta.pe','lmendoza',SHA2('123456',256),'OPERADOR_ALMACEN','S002',1,'ACTIVO',2000.00,'ALMACEN'),
-('E0004','Julia','Torres','jtorres@logiruta.pe','jtorres',SHA2('123456',256),'SUPERVISOR_RUTA','S002',1,'ACTIVO',3200.00,'OPERACIONES'),
-('E0010','Iván','Cárdenas','icardenas@logiruta.pe','icardenas',SHA2('123456',256),'REPARTIDOR','S002',1,'ACTIVO',1600.00,'REPARTO'),
-('E0011','Mario','Huamán','mhuaman@logiruta.pe','mhuaman',SHA2('123456',256),'REPARTIDOR','S002',1,'ACTIVO',1600.00,'REPARTO'),
-('E0012','Carlos','Salazar','csalazar@logiruta.pe','csalazar',SHA2('123456',256),'REPARTIDOR','S004',1,'VACACIONES',1550.00,'REPARTO');
+('E0001','Administrador','Sistema','admin@logiruta.pe','admin',SHA2('admin',256),'ADMINISTRADOR','S001',1,'ACTIVO',6500.00,'GERENCIA','AFP'),
+('E0002','Rosa','Quispe','rquispe@logiruta.pe','rquispe',SHA2('123456',256),'AGENTE_VENTANILLA','S001',1,'ACTIVO',1800.00,'ATENCION AL CLIENTE','AFP'),
+('E0003','Luis','Mendoza','lmendoza@logiruta.pe','lmendoza',SHA2('123456',256),'OPERADOR_ALMACEN','S002',1,'ACTIVO',2000.00,'ALMACEN','SNP'),
+('E0004','Julia','Torres','jtorres@logiruta.pe','jtorres',SHA2('123456',256),'SUPERVISOR_RUTA','S002',1,'ACTIVO',3200.00,'OPERACIONES','AFP'),
+('E0010','Iván','Cárdenas','icardenas@logiruta.pe','icardenas',SHA2('123456',256),'REPARTIDOR','S002',1,'ACTIVO',1600.00,'REPARTO','AFP'),
+('E0011','Mario','Huamán','mhuaman@logiruta.pe','mhuaman',SHA2('123456',256),'REPARTIDOR','S002',1,'ACTIVO',1600.00,'REPARTO','SNP'),
+('E0012','Carlos','Salazar','csalazar@logiruta.pe','csalazar',SHA2('123456',256),'REPARTIDOR','S004',1,'VACACIONES',1550.00,'REPARTO','AFP');
 
 INSERT INTO clientes (idcliente, razonsocial, tipocliente, nrodocumento, email, telefono, usuario_portal) VALUES
 ('C0001','Cliente de prueba','NATURAL','45879632','cliente@correo.pe','987654321',NULL),
@@ -563,6 +593,12 @@ INSERT INTO rutas (fecha, idzona, placa, idsupervisor) VALUES
 
 INSERT INTO asignaciones (codigo, idrepartidor, idruta) VALUES
 ('LR00000004','E0010',1), ('LR00000008','E0011',1), ('LR00000005','E0010',2);
+
+-- Boleta de pago de ejemplo (GRASP, Sesión 17): Iván Cárdenas, AFP, 10 horas extras
+INSERT INTO boletas_pago (idempleado, periodo, sueldo_basico, horas_extras, monto_horas_extras, regimen,
+                          aporte_pension, descuento_salud, total_ingresos, total_descuentos, sueldo_neto, usuario)
+VALUES ('E0010', DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 1 MONTH), '%Y-%m'), 1600.00, 10, 66.67, 'AFP',
+        176.00, 48.00, 1666.67, 224.00, 1442.67, 'E0001');
 
 -- Manifiesto de ejemplo de la ruta 1 (Composite), usado por el reporte Jasper "Manifiesto de carga"
 INSERT INTO unidades_carga (idunidad, tipo, tara_kg, idpadre, idruta) VALUES
@@ -702,6 +738,29 @@ BEGIN
     INSERT INTO historial_remuneracion (idempleado, operacion, sueldo_anterior, sueldo_nuevo,
                                         area_anterior, area_nueva, usuario)
     VALUES (p_id, p_operacion, v_sueldo, p_sueldo, v_area, p_area, p_usuario);
+END$$
+
+CREATE PROCEDURE sp_Empleado_CambiarRegimen(IN p_id CHAR(5), IN p_regimen VARCHAR(5))
+BEGIN
+    UPDATE empleados SET regimen_pensionario = p_regimen WHERE idempleado = p_id;
+END$$
+
+CREATE PROCEDURE sp_Boleta_Registrar(
+    OUT p_id INT, IN p_empleado CHAR(5), IN p_periodo CHAR(7), IN p_basico DECIMAL(10,2),
+    IN p_horas INT, IN p_monto_horas DECIMAL(10,2), IN p_regimen VARCHAR(5),
+    IN p_pension DECIMAL(10,2), IN p_salud DECIMAL(10,2), IN p_ingresos DECIMAL(10,2),
+    IN p_descuentos DECIMAL(10,2), IN p_neto DECIMAL(10,2), IN p_usuario CHAR(5))
+BEGIN
+    -- Si la boleta del periodo ya existe se vuelve a emitir con los nuevos montos
+    INSERT INTO boletas_pago (idempleado, periodo, sueldo_basico, horas_extras, monto_horas_extras, regimen,
+                              aporte_pension, descuento_salud, total_ingresos, total_descuentos, sueldo_neto, usuario)
+    VALUES (p_empleado, p_periodo, p_basico, p_horas, p_monto_horas, p_regimen,
+            p_pension, p_salud, p_ingresos, p_descuentos, p_neto, p_usuario)
+    ON DUPLICATE KEY UPDATE sueldo_basico = p_basico, horas_extras = p_horas, monto_horas_extras = p_monto_horas,
+            regimen = p_regimen, aporte_pension = p_pension, descuento_salud = p_salud,
+            total_ingresos = p_ingresos, total_descuentos = p_descuentos, sueldo_neto = p_neto,
+            usuario = p_usuario, fecha_emision = CURRENT_TIMESTAMP;
+    SELECT idboleta INTO p_id FROM boletas_pago WHERE idempleado = p_empleado AND periodo = p_periodo;
 END$$
 
 CREATE PROCEDURE sp_HistorialLaboral_Registrar(
@@ -931,4 +990,4 @@ SHOW TABLES;
 SELECT codigo, idservicio, estado, paso_flujo, intentos FROM envios;
 SELECT * FROM vw_incidencias_zona;
 SELECT * FROM vw_cumplimiento_tiempos;
-SELECT idempleado, usuario, rol, estado_laboral, sueldo, area FROM empleados;
+SELECT idempleado, usuario, rol, estado_laboral, sueldo, area, regimen_pensionario FROM empleados;

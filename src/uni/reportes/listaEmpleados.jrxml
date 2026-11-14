@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="listaEmpleados" language="java" pageWidth="595" pageHeight="842" orientation="Portrait" whenNoDataType="NoDataSection" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="eaddefa0-a64e-4259-9476-0a56e0220703">
 <style name="Fila" mode="Opaque" backcolor="#FFFFFF"><conditionalStyle><conditionExpression><![CDATA[$V{REPORT_COUNT} % 2 == 0]]></conditionExpression><style mode="Opaque" backcolor="#F3F7FB"/></conditionalStyle></style>
+<subDataset name="DatasetSueldosSucursal" uuid="f2b1c3d4-5e6f-7a8b-9c0d-1e2f3a4b5c6d">
+    <queryString language="SQL">
+        <![CDATA[SELECT s.nombre AS sucursal, SUM(e.sueldo) AS total_sueldo 
+        FROM empleados e 
+        JOIN sucursales s ON s.idsucursal = e.idsucursal 
+        WHERE e.activo = 1 
+        GROUP BY s.nombre]]>
+    </queryString>
+    <field name="sucursal" class="java.lang.String"/>
+    <field name="total_sueldo" class="java.math.BigDecimal"/>
+</subDataset>
 <queryString language="SQL"><![CDATA[SELECT e.idempleado, CONCAT(e.nombre, ' ', e.apellidos) AS nombre, e.rol, s.nombre AS sucursal,
        e.area, e.estado_laboral, e.sueldo
 FROM empleados e
@@ -21,6 +32,54 @@ ORDER BY e.idempleado]]></queryString>
 <columnHeader><band height="22" splitType="Stretch"><rectangle><reportElement mode="Opaque" x="0" y="0" width="555" height="22" forecolor="#1F4E79" backcolor="#1F4E79" uuid="ca47af02-539c-426f-9c06-896e12463938"/></rectangle><staticText><reportElement x="0" y="0" width="45" height="22" forecolor="#FFFFFF" uuid="f0b7e9cf-0c17-4e8b-af05-f98afb4c9a36"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="9" isBold="true"/></textElement><text><![CDATA[Código]]></text></staticText><staticText><reportElement x="45" y="0" width="96" height="22" forecolor="#FFFFFF" uuid="8bb2204b-8e77-4a30-a6b9-60f38012cd70"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="9" isBold="true"/></textElement><text><![CDATA[Nombre]]></text></staticText><staticText><reportElement x="141" y="0" width="116" height="22" forecolor="#FFFFFF" uuid="a2dd4380-fbe1-489d-9b29-2ea254a40d6d"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="9" isBold="true"/></textElement><text><![CDATA[Rol]]></text></staticText><staticText><reportElement x="257" y="0" width="100" height="22" forecolor="#FFFFFF" uuid="c9d782c1-56ed-43c5-bb1c-f47c3338313f"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="9" isBold="true"/></textElement><text><![CDATA[Sucursal]]></text></staticText><staticText><reportElement x="357" y="0" width="77" height="22" forecolor="#FFFFFF" uuid="83d19196-a447-4732-b928-3a53503c8fbc"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="9" isBold="true"/></textElement><text><![CDATA[Área]]></text></staticText><staticText><reportElement x="434" y="0" width="68" height="22" forecolor="#FFFFFF" uuid="b3adc640-296d-4dc6-b379-c8f5878c5673"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="SansSerif" size="9" isBold="true"/></textElement><text><![CDATA[Estado]]></text></staticText><staticText><reportElement x="502" y="0" width="53" height="22" forecolor="#FFFFFF" uuid="9be039aa-68d8-4dec-a02f-1744de8fdb5c"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Right" verticalAlignment="Middle"><font fontName="SansSerif" size="9" isBold="true"/></textElement><text><![CDATA[Sueldo S/]]></text></staticText></band></columnHeader>
 <detail><band height="18" splitType="Stretch"><frame><reportElement style="Fila" x="0" y="0" width="555" height="18" uuid="6a754a99-1eaf-4884-a425-71a0ee775006"/><textField textAdjust="StretchHeight" isBlankWhenNull="true"><reportElement x="0" y="0" width="45" height="18" uuid="89dd0d97-b0ef-45d7-a2f7-7da0768a4c83"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="9" isBold="false"/></textElement><textFieldExpression><![CDATA[$F{idempleado}]]></textFieldExpression></textField><textField textAdjust="StretchHeight" isBlankWhenNull="true"><reportElement x="45" y="0" width="96" height="18" uuid="53ad91e0-cb69-4c00-ae5b-693ad1665f43"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="9" isBold="false"/></textElement><textFieldExpression><![CDATA[$F{nombre}]]></textFieldExpression></textField><textField textAdjust="StretchHeight" isBlankWhenNull="true"><reportElement x="141" y="0" width="116" height="18" uuid="36383ffd-07f7-492d-be32-5d421f504b7f"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="9" isBold="false"/></textElement><textFieldExpression><![CDATA[$F{rol}]]></textFieldExpression></textField><textField textAdjust="StretchHeight" isBlankWhenNull="true"><reportElement x="257" y="0" width="100" height="18" uuid="16cabba7-8898-4683-b8b5-c5ada8e1b977"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="9" isBold="false"/></textElement><textFieldExpression><![CDATA[$F{sucursal}]]></textFieldExpression></textField><textField textAdjust="StretchHeight" isBlankWhenNull="true"><reportElement x="357" y="0" width="77" height="18" uuid="757b24eb-cec9-49fa-b5cd-df3235782015"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="9" isBold="false"/></textElement><textFieldExpression><![CDATA[$F{area}]]></textFieldExpression></textField><textField textAdjust="StretchHeight" isBlankWhenNull="true"><reportElement x="434" y="0" width="68" height="18" uuid="a1f8ebc1-7d15-49e3-b57c-78194dc79cb8"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="SansSerif" size="9" isBold="false"/></textElement><textFieldExpression><![CDATA[$F{estado_laboral}]]></textFieldExpression></textField><textField textAdjust="StretchHeight" pattern="#,##0.00" isBlankWhenNull="true"><reportElement x="502" y="0" width="53" height="18" uuid="0894e437-4633-4197-834c-804f3b35833f"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Right" verticalAlignment="Middle"><font fontName="SansSerif" size="9" isBold="false"/></textElement><textFieldExpression><![CDATA[$F{sueldo}]]></textFieldExpression></textField></frame></band></detail>
 <pageFooter><band height="22" splitType="Stretch"><line><reportElement x="0" y="2" width="555" height="1" forecolor="#1F4E79" uuid="c2c8ebc1-ed36-4b9e-b1b2-9476d734c0ae"/><graphicElement><pen lineWidth="1.0"/></graphicElement></line><staticText><reportElement x="0" y="4" width="300" height="16" forecolor="#666666" uuid="a4eae9a1-5f09-4c3c-ba7f-ed30a75c8fea"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="8" isBold="false"/></textElement><text><![CDATA[Documento generado por AppLogistica (uso académico)]]></text></staticText><textField isBlankWhenNull="true"><reportElement x="355" y="4" width="150" height="16" forecolor="#666666" uuid="33127c07-179c-4247-9d7d-a35265cbb462"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Right" verticalAlignment="Middle"><font fontName="SansSerif" size="8" isBold="false"/></textElement><textFieldExpression><![CDATA["Página " + $V{PAGE_NUMBER} + " de"]]></textFieldExpression></textField><textField evaluationTime="Report"><reportElement x="505" y="4" width="50" height="16" forecolor="#666666" uuid="1759b043-f90d-429e-9d57-2071cc0eefe2"/><textElement verticalAlignment="Middle"><font fontName="SansSerif" size="8"/></textElement><textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression></textField></band></pageFooter>
-<summary><band height="40" splitType="Stretch"><line><reportElement x="0" y="4" width="555" height="1" forecolor="#1F4E79" uuid="b5d80b4f-cc99-4425-800a-ab52ece7f18c"/><graphicElement><pen lineWidth="1.0"/></graphicElement></line><textField isBlankWhenNull="true"><reportElement x="0" y="8" width="555" height="18" forecolor="#1F4E79" uuid="a91ad13b-1932-4888-8b2b-6507ec5ffdae"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Right" verticalAlignment="Middle"><font fontName="SansSerif" size="10" isBold="true"/></textElement><textFieldExpression><![CDATA["Empleados: " + $V{TOTAL_REG} + "    Planilla mensual: S/ " + new java.text.DecimalFormat("#,##0.00").format($V{TOTAL_SUELDO})]]></textFieldExpression></textField></band></summary>
-<noData><band height="100"><rectangle><reportElement mode="Opaque" x="0" y="0" width="555" height="62" forecolor="#1F4E79" backcolor="#1F4E79" uuid="6553a4b8-40ca-44d1-84c3-11ffffcd474b"/></rectangle><staticText><reportElement x="10" y="4" width="535" height="16" forecolor="#C8DCF0" uuid="b9800ce1-e28f-43ed-aa3d-99712c77bd30"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="9" isBold="false"/></textElement><text><![CDATA[LogiRuta Perú S.A.C. · Plataforma de logística y seguimiento]]></text></staticText><staticText><reportElement x="10" y="20" width="535" height="24" forecolor="#FFFFFF" uuid="1f8c6bfb-0831-49cc-8a7e-6fe288b06d4f"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="17" isBold="true"/></textElement><text><![CDATA[LISTA DE EMPLEADOS]]></text></staticText><staticText><reportElement x="0" y="72" width="555" height="20" forecolor="#999999" uuid="1672b7e5-71d6-481b-b3a2-489d3960451c"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="SansSerif" size="11" isBold="false"/></textElement><text><![CDATA[No hay datos para mostrar con los filtros elegidos.]]></text></staticText></band></noData>
+<summary>
+    <band height="220" splitType="Stretch">
+        <line>
+            <reportElement x="0" y="4" width="555" height="1" forecolor="#1F4E79" uuid="b5d80b4f-cc99-4425-800a-ab52ece7f18c"/>
+            <graphicElement><pen lineWidth="1.0"/></graphicElement>
+        </line>
+        <textField isBlankWhenNull="true">
+            <reportElement x="0" y="8" width="555" height="18" forecolor="#1F4E79" uuid="a91ad13b-1932-4888-8b2b-6507ec5ffdae"/>
+            <box leftPadding="3" rightPadding="3"/>
+            <textElement textAlignment="Right" verticalAlignment="Middle">
+                <font fontName="SansSerif" size="10" isBold="true"/>
+            </textElement>
+            <textFieldExpression><![CDATA["Empleados: " + $V{TOTAL_REG} + "    Planilla mensual: S/ " + new java.text.DecimalFormat("#,##0.00").format($V{TOTAL_SUELDO})]]></textFieldExpression>
+        </textField>
+        
+        <!-- SUMMARY CON GRÁFICO DE BARRAS DE TOTAL DE SUELDOS POR SUCURSAL -->
+        <barChart>
+            <chart evaluationTime="Report">
+                <reportElement x="0" y="32" width="555" height="180" uuid="7a1e2f3c-4b5d-6e7f-8a9b-0c1d2e3f4a5b"/>
+                <chartTitle>
+                    <titleExpression><![CDATA["Total de Sueldos por Sucursal"]]></titleExpression>
+                </chartTitle>
+                <chartSubtitle/>
+                <chartLegend/>
+            </chart>
+            <categoryDataset>
+                <dataset>
+                    <datasetRun subDataset="DatasetSueldosSucursal" uuid="3c4b5d6e-7f8a-9b0c-1d2e-3f4a5b6c7d8e">
+                        <connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+                    </datasetRun>
+                </dataset>
+                <categorySeries>
+                    <seriesExpression><![CDATA["Sueldo (S/)"]]></seriesExpression>
+                    <categoryExpression><![CDATA[$F{sucursal}]]></categoryExpression>
+                    <valueExpression><![CDATA[$F{total_sueldo}]]></valueExpression>
+                </categorySeries>
+            </categoryDataset>
+            <barPlot>
+                <plot/>
+                <itemLabel/>
+                <categoryAxisFormat>
+                    <axisFormat/>
+                </categoryAxisFormat>
+                <valueAxisFormat>
+                    <axisFormat/>
+                </valueAxisFormat>
+            </barPlot>
+        </barChart>
+    </band>
+</summary><noData><band height="100"><rectangle><reportElement mode="Opaque" x="0" y="0" width="555" height="62" forecolor="#1F4E79" backcolor="#1F4E79" uuid="6553a4b8-40ca-44d1-84c3-11ffffcd474b"/></rectangle><staticText><reportElement x="10" y="4" width="535" height="16" forecolor="#C8DCF0" uuid="b9800ce1-e28f-43ed-aa3d-99712c77bd30"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="9" isBold="false"/></textElement><text><![CDATA[LogiRuta Perú S.A.C. · Plataforma de logística y seguimiento]]></text></staticText><staticText><reportElement x="10" y="20" width="535" height="24" forecolor="#FFFFFF" uuid="1f8c6bfb-0831-49cc-8a7e-6fe288b06d4f"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="17" isBold="true"/></textElement><text><![CDATA[LISTA DE EMPLEADOS]]></text></staticText><staticText><reportElement x="0" y="72" width="555" height="20" forecolor="#999999" uuid="1672b7e5-71d6-481b-b3a2-489d3960451c"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="SansSerif" size="11" isBold="false"/></textElement><text><![CDATA[No hay datos para mostrar con los filtros elegidos.]]></text></staticText></band></noData>
 </jasperReport>

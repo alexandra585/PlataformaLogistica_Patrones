@@ -24,11 +24,11 @@ import uni.util.RegistroPlantillas;
 import uni.util.SesionUsuario;
 
 /**
- * Registro de envíos en ventanilla.
- *  - BUILDER: el EnvioTo se arma paso a paso con EnvioBuilder.
- *  - DECORATOR: "Cotizar" muestra la tarifa con sus adicionales.
- *  - FACADE: "Registrar" hace una sola llamada a RegistroEnvioFacade.
- *  - PROTOTYPE: "Repetir último" clona el último envío (clientes corporativos).
+ * Registro de envíos en ventanilla. - BUILDER: el EnvioTo se arma paso a paso
+ * con EnvioBuilder. - DECORATOR: "Cotizar" muestra la tarifa con sus
+ * adicionales. - FACADE: "Registrar" hace una sola llamada a
+ * RegistroEnvioFacade. - PROTOTYPE: "Repetir último" clona el último envío
+ * (clientes corporativos).
  */
 public class EnvioView extends FormularioBase {
 
@@ -39,7 +39,10 @@ public class EnvioView extends FormularioBase {
     private final RegistroEnvioFacade fachada = ConfiguracionSistema.getInstancia().getRegistroEnvio();
     private final RegistroPlantillas plantillas = ConfiguracionSistema.getInstancia().getPlantillas();
 
-    private final JComboBox<ItemCombo> cboCliente = new JComboBox<>();
+    /*private final JComboBox<ItemCombo> cboCliente = new JComboBox<>();*/
+    private final JTextField txtRemitente = new JTextField(22);
+    private final javax.swing.JButton btnBuscarCliente = new javax.swing.JButton("...");
+    private String idClienteSeleccionado = null;
     private final JComboBox<TipoServicio> cboServicio = new JComboBox<>(TipoServicio.values());
     private final JTextField txtPeso = new JTextField("1.0", 6);
     private final JTextField txtValor = new JTextField("0", 8);
@@ -67,7 +70,24 @@ public class EnvioView extends FormularioBase {
                 BorderLayout.NORTH);
         cargarCombos();
 
-        JPanel envio = formulario("Envío", "Remitente", cboCliente, "Servicio", cboServicio,
+        //Panel auxiliar para juntar el texto de remitente y el boton [...]
+        JPanel panelRemitente = new JPanel(new BorderLayout(4, 0));
+        txtRemitente.setEditable(false);
+        panelRemitente.add(txtRemitente, BorderLayout.CENTER);
+        panelRemitente.add(btnBuscarCliente, BorderLayout.EAST);
+
+        //Acción al hacer clic en los tres puntos [...]
+        btnBuscarCliente.addActionListener(e -> {
+            ClienteBuscarDialog modal = new ClienteBuscarDialog((java.awt.Frame) javax.swing.SwingUtilities.getWindowAncestor(this), true);
+            modal.setVisible(true); //Abre la ventana flotante modal
+
+            ItemCombo elegido = modal.getClienteSeleccionado();
+            if (elegido != null) {
+                idClienteSeleccionado = elegido.getId();
+                txtRemitente.setText(elegido.getId() + " - " + elegido.toString());
+            }
+        });
+        JPanel envio = formulario("Envío", "Remitente", panelRemitente, "Servicio", cboServicio,
                 "Peso (kg)", txtPeso, "Valor declarado (S/)", txtValor, "", chkSeguro, "", chkFragil,
                 "", chkFirma, "Fecha programada (aaaa-mm-dd)", txtFechaProg, "Tienda de recojo", cboTienda);
         JPanel destino = formulario("Destinatario y destino", "Nombre", txtNombre, "Celular (9 dígitos)",
@@ -102,9 +122,7 @@ public class EnvioView extends FormularioBase {
     private void cargarCombos() {
         try {
             CatalogoDao cat = new CatalogoDao();
-            for (ItemCombo i : cat.clientes()) {
-                cboCliente.addItem(i);
-            }
+            
             for (ItemCombo i : cat.tiendasRecojo()) {
                 cboTienda.addItem(i);
             }
@@ -116,7 +134,9 @@ public class EnvioView extends FormularioBase {
         }
     }
 
-    /** Habilita solo los datos que pide cada tipo de servicio. */
+    /**
+     * Habilita solo los datos que pide cada tipo de servicio.
+     */
     private void ajustarPorServicio() {
         TipoServicio t = (TipoServicio) cboServicio.getSelectedItem();
         boolean recojo = t == TipoServicio.RECOJO_TIENDA;
@@ -134,11 +154,15 @@ public class EnvioView extends FormularioBase {
         }
     }
 
-    /** PATRÓN BUILDER: construcción paso a paso a partir del formulario. */
+    /**
+     * PATRÓN BUILDER: construcción paso a paso a partir del formulario.
+     */
     private EnvioTo construir() {
         TipoServicio t = (TipoServicio) cboServicio.getSelectedItem();
-        ItemCombo cli = (ItemCombo) cboCliente.getSelectedItem();
-        EnvioBuilder b = new EnvioBuilder(cli == null ? null : cli.getId(), t)
+        if (idClienteSeleccionado == null || idClienteSeleccionado.isEmpty()) {
+            throw new IllegalArgumentException("Debe seleccionar un remitente haciendo clic en los tres puntos [...].");
+        }
+        EnvioBuilder b = new EnvioBuilder(idClienteSeleccionado, t)
                 .desde(ORIGEN.clone())
                 .destinatario(txtNombre.getText().trim(), txtCelular.getText().trim(),
                         txtEmail.getText().trim().isEmpty() ? null : txtEmail.getText().trim())
@@ -183,7 +207,9 @@ public class EnvioView extends FormularioBase {
         }
     }
 
-    /** PATRÓN DECORATOR: tarifa base envuelta por los adicionales elegidos. */
+    /**
+     * PATRÓN DECORATOR: tarifa base envuelta por los adicionales elegidos.
+     */
     private void cotizar() {
         try {
             EnvioTo e = construir();
@@ -196,7 +222,10 @@ public class EnvioView extends FormularioBase {
         }
     }
 
-    /** PATRÓN FACADE: una sola llamada registra, geolocaliza, tarifa, guarda y notifica. */
+    /**
+     * PATRÓN FACADE: una sola llamada registra, geolocaliza, tarifa, guarda y
+     * notifica.
+     */
     private void registrar() {
         try {
             EnvioTo e = construir();
@@ -204,7 +233,7 @@ public class EnvioView extends FormularioBase {
             plantillas.registrar(PLANTILLA, e);       // queda como prototipo para "Repetir último"
             txtResultado.setText("ENVÍO REGISTRADO\n  " + resumen.replace(" | ", "\n  ")
                     + (e.getDestino() == null ? "" : String.format("%n  Destino geolocalizado: (%.5f, %.5f)",
-                            e.getDestino().getLatitud(), e.getDestino().getLongitud()))
+                    e.getDestino().getLatitud(), e.getDestino().getLongitud()))
                     + "\n  Notificación enviada al destinatario por "
                     + ConfiguracionSistema.getInstancia().getIntegraciones().crearNotificador().getCanal() + "\n");
             info("Envío " + e.getCodigo() + " registrado.\nCosto: S/ " + String.format("%.2f", e.getCosto()));
@@ -214,15 +243,15 @@ public class EnvioView extends FormularioBase {
         }
     }
 
-    /** PATRÓN PROTOTYPE: copia profunda del último envío; solo cambia el destinatario. */
+    /**
+     * PATRÓN PROTOTYPE: copia profunda del último envío; solo cambia el
+     * destinatario.
+     */
     private void repetirUltimo() {
         try {
             EnvioTo copia = plantillas.obtener(PLANTILLA);
-            for (int i = 0; i < cboCliente.getItemCount(); i++) {
-                if (cboCliente.getItemAt(i).getId().equals(copia.getIdcliente())) {
-                    cboCliente.setSelectedIndex(i);
-                }
-            }
+            idClienteSeleccionado = copia.getIdcliente();
+            txtRemitente.setText(copia.getIdcliente() + " (Cargado por Prototype)");
             cboServicio.setSelectedItem(copia.getServicio());
             txtPeso.setText(String.valueOf(copia.getPesoKg()));
             txtValor.setText(String.valueOf(copia.getValorDeclarado()));
