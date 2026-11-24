@@ -1,7 +1,11 @@
 package uni.controller;
 
 import java.util.List;
+import uni.dao.BloqueoLoginDao;
 import uni.dao.EmpleadoDao;
+import uni.entity.BloqueoLoginTo;
+import uni.service.ControlAccesoLogin;
+import uni.service.CuentaBloqueadaException;
 import uni.entity.EmpleadoTo;
 import uni.util.SesionUsuario;
 
@@ -9,13 +13,26 @@ import uni.util.SesionUsuario;
 public class EmpleadoController {
 
     private final EmpleadoDao dao = new EmpleadoDao();
+    private final ControlAccesoLogin controlAcceso = new ControlAccesoLogin(new BloqueoLoginDao());
 
-    /** Valida el usuario y, si es correcto, inicia la sesión (Singleton). */
+    /**
+     * Valida el usuario y, si es correcto, inicia la sesión (Singleton).
+     * GRASP CONTROLADOR: la vista (LoginView) solo delega aquí; la regla de
+     * los 3 intentos la decide ControlAccesoLogin (Experto en información).
+     *
+     * @throws CuentaBloqueadaException si la cuenta está bloqueada o se bloquea en este intento
+     * @throws SecurityException si la clave es incorrecta (indica los intentos que quedan)
+     */
     public boolean EmpleadoValidar(String usuario, String clave) throws Exception {
+        controlAcceso.verificarNoBloqueado(usuario);
         EmpleadoTo e = dao.validar(usuario, clave);
         if (e == null) {
-            return false;
+            int restantes = controlAcceso.registrarFallo(usuario);   // al 3.er fallo lanza CuentaBloqueadaException
+            throw new SecurityException("Usuario o contraseña incorrectos.\nLe quedan " + restantes
+                    + " intento(s) antes de que la cuenta se bloquee por "
+                    + uni.util.ParametrosSeguridad.MINUTOS_BLOQUEO + " minutos.");
         }
+        controlAcceso.registrarExito(usuario);
         // PATRÓN STATE: el estado laboral decide si puede ingresar
         uni.service.IEstadoLaboral estado = uni.service.EstadoLaboralBase.de(e.getEstadoLaboral());
         if (!estado.puedeIniciarSesion()) {
@@ -89,5 +106,18 @@ public class EmpleadoController {
 
     public List<Object[]> boletasListar(String id) throws Exception {
         return new uni.dao.BoletaDao().listar(id);
+    }
+
+    /** Usuarios con intentos fallidos o bloqueados (Utilitarios > Desbloquear usuarios). */
+    public List<BloqueoLoginTo> bloqueosListar() throws Exception {
+        return controlAcceso.listarConFallos();
+    }
+
+    public long bloqueoSegundosRestantes(BloqueoLoginTo b) {
+        return controlAcceso.segundosRestantes(b);
+    }
+
+    public void usuarioDesbloquear(String usuario) throws Exception {
+        controlAcceso.desbloquear(usuario);
     }
 }

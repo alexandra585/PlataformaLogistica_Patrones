@@ -1,0 +1,42 @@
+@startuml secuencia_login_bloqueo
+skinparam defaultFontSize 11
+skinparam sequenceMessageAlign center
+title Secuencia: inicio de sesión con bloqueo tras 3 intentos fallidos
+
+actor Usuario
+participant LoginView
+participant EmpleadoController
+participant ControlAccesoLogin
+participant BloqueoLoginDao
+participant EmpleadoDao
+database MySQL
+
+Usuario -> LoginView : usuario + clave, [Aceptar]
+LoginView -> EmpleadoController : EmpleadoValidar(usuario, clave)
+EmpleadoController -> ControlAccesoLogin : verificarNoBloqueado(usuario)
+ControlAccesoLogin -> BloqueoLoginDao : buscar(usuario)
+BloqueoLoginDao -> MySQL : SELECT bloqueos_login
+alt cuenta bloqueada (menos de 5 min)
+  ControlAccesoLogin --> LoginView : CuentaBloqueadaException
+  LoginView --> Usuario : "Cuenta bloqueada, intente en N minuto(s)"
+else cuenta libre
+  EmpleadoController -> EmpleadoDao : validar(usuario, clave)
+  EmpleadoDao -> MySQL : WHERE clave = SHA2(?,256)
+  alt clave incorrecta
+    EmpleadoController -> ControlAccesoLogin : registrarFallo(usuario)
+    ControlAccesoLogin -> BloqueoLoginDao : guardar(intentos + 1)
+    alt intentos < 3
+      EmpleadoController --> LoginView : SecurityException("le quedan N intentos")
+    else 3.er intento
+      ControlAccesoLogin -> BloqueoLoginDao : guardar(bloqueado_hasta = ahora + 5 min)
+      ControlAccesoLogin --> LoginView : CuentaBloqueadaException
+    end
+  else clave correcta
+    EmpleadoController -> ControlAccesoLogin : registrarExito(usuario)
+    ControlAccesoLogin -> BloqueoLoginDao : guardar(intentos = 0)
+    EmpleadoController -> EmpleadoController : State: puedeIniciarSesion()\nSesionUsuario.iniciar() (Singleton)
+    EmpleadoController --> LoginView : true
+    LoginView --> Usuario : abre PrincipalView
+  end
+end
+@enduml

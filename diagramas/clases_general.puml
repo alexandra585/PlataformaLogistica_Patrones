@@ -1,0 +1,90 @@
+@startuml clases_general
+skinparam classAttributeIconSize 0
+skinparam defaultFontSize 10
+skinparam class {
+  BackgroundColor #F3F7FB
+  BorderColor #1F4E79
+}
+hide empty members
+title Diagrama de clases general de AppLogistica (núcleo del dominio)
+
+package "uni.controller" {
+  class EnvioController
+  class EmpleadoController
+  class ClienteController
+  class RegistroEnvioFacade
+  class GestorComandos
+}
+package "uni.entity" {
+  class EnvioTo
+  class ClienteTo
+  class EmpleadoTo
+  class BoletaPagoTo
+  class BloqueoLoginTo
+}
+package "uni.service" {
+  class EnvioContexto
+  interface IEstadoEnvio
+  abstract class EstadoEnvioBase
+  interface IObservadorEnvio
+  interface IComando
+  class EnvioMemento
+  interface ITarifa
+  class TarifaDecorator
+  class EmpleadoNomina
+  interface DescuentoStrategy
+  class DescuentoAFP
+  class DescuentoSNP
+  class GeneradorBoleta
+  class ControlAccesoLogin
+  interface ISeguimientoService
+  class SeguimientoServiceProxy
+}
+package "uni.reportes" {
+  abstract class Reporte
+  interface ISalidaReporte
+}
+package "uni.dao / uni.database" {
+  class EnvioDao
+  class EmpleadoDao
+  class BoletaDao
+  class BloqueoLoginDao
+  class AccesoDB <<Singleton>>
+}
+
+RegistroEnvioFacade --> EnvioController
+RegistroEnvioFacade ..> ITarifa
+EnvioController --> EnvioDao
+EnvioContexto o-- IEstadoEnvio : estado
+IEstadoEnvio <|.. EstadoEnvioBase
+EnvioContexto o-- "*" IObservadorEnvio
+EnvioContexto ..> EnvioMemento : <<crea>>
+EnvioContexto --> EnvioTo
+EnvioTo --> ClienteTo
+GestorComandos o-- "*" IComando
+IComando ..> EnvioContexto
+ITarifa <|.. TarifaDecorator
+SeguimientoServiceProxy ..|> ISeguimientoService
+EmpleadoController --> EmpleadoDao
+EmpleadoController --> ControlAccesoLogin
+EmpleadoController ..> GeneradorBoleta
+EmpleadoNomina --> EmpleadoTo
+EmpleadoNomina o-- DescuentoStrategy
+DescuentoStrategy <|.. DescuentoAFP
+DescuentoStrategy <|.. DescuentoSNP
+GeneradorBoleta ..> EmpleadoNomina
+GeneradorBoleta ..> BoletaPagoTo : <<crea>>
+GeneradorBoleta --> BoletaDao
+GeneradorBoleta ..> Reporte
+ControlAccesoLogin --> BloqueoLoginDao
+ControlAccesoLogin ..> BloqueoLoginTo : <<crea>>
+Reporte o-- ISalidaReporte : bridge
+EnvioDao ..> AccesoDB
+EmpleadoDao ..> AccesoDB
+BoletaDao ..> AccesoDB
+BloqueoLoginDao ..> AccesoDB
+DescuentoSNP -[hidden]down-> EnvioDao
+EstadoEnvioBase -[hidden]down-> BoletaDao
+AccesoDB -[hidden]down-> EmpleadoTo
+AccesoDB -[hidden]down-> Reporte
+@enduml

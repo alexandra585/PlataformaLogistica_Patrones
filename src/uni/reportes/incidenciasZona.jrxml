@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="incidenciasZona" language="java" pageWidth="595" pageHeight="842" orientation="Portrait" whenNoDataType="NoDataSection" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="868b70f4-7957-484c-89f6-f1701d8c4e03">
 <style name="Fila" mode="Opaque" backcolor="#FFFFFF"><conditionalStyle><conditionExpression><![CDATA[$V{REPORT_COUNT} % 2 == 0]]></conditionExpression><style mode="Opaque" backcolor="#F3F7FB"/></conditionalStyle></style>
+<subDataset name="DatasetIncidenciasMotivo" uuid="85001522-de2a-4974-be31-dde6e67f016d">
+    <queryString language="SQL"><![CDATA[SELECT COALESCE(i.motivo,'Sin motivo') AS motivo, COUNT(*) AS cantidad FROM incidencias i GROUP BY i.motivo ORDER BY cantidad DESC]]></queryString>
+    <field name="motivo" class="java.lang.String"/>
+    <field name="cantidad" class="java.lang.Long"/>
+</subDataset>
 <queryString language="SQL"><![CDATA[SELECT COALESCE(z.nombre, 'Sin zona') AS zona, i.codigo, i.motivo, i.descripcion,
        CONCAT(e.nombre, ' ', e.apellidos) AS registrado_por, i.fecha
 FROM incidencias i
@@ -22,7 +27,7 @@ ORDER BY zona, i.fecha]]></queryString>
 <pageFooter><band height="22" splitType="Stretch"><line><reportElement x="0" y="2" width="555" height="1" forecolor="#1F4E79" uuid="f9226bcb-b3c0-4a68-a8be-847016289d99"/><graphicElement><pen lineWidth="1.0"/></graphicElement></line><staticText><reportElement x="0" y="4" width="300" height="16" forecolor="#666666" uuid="059a3f82-a186-4aa0-9697-ded981fcaabd"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="8" isBold="false"/></textElement><text><![CDATA[Documento generado por AppLogistica (uso académico)]]></text></staticText><textField isBlankWhenNull="true"><reportElement x="355" y="4" width="150" height="16" forecolor="#666666" uuid="2156feb7-cbdd-4921-b127-b849352d81df"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Right" verticalAlignment="Middle"><font fontName="SansSerif" size="8" isBold="false"/></textElement><textFieldExpression><![CDATA["Página " + $V{PAGE_NUMBER} + " de"]]></textFieldExpression></textField><textField evaluationTime="Report"><reportElement x="505" y="4" width="50" height="16" forecolor="#666666" uuid="53242daa-ba01-4315-8346-0b2be599df15"/><textElement verticalAlignment="Middle"><font fontName="SansSerif" size="8"/></textElement><textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression></textField></band></pageFooter>
 
 <!-- SUMMARY CON GRÁFICO DE BARRAS DE INCIDENCIAS POR ZONA -->
-<summary><band height="200" splitType="Stretch">
+<summary><band height="450" splitType="Stretch">
     <line><reportElement x="0" y="4" width="555" height="1" forecolor="#1F4E79" uuid="72159843-0d6b-4a5b-be40-7ef2649731ec"/><graphicElement><pen lineWidth="1.0"/></graphicElement></line>
     
     <textField isBlankWhenNull="true">
@@ -61,6 +66,31 @@ ORDER BY zona, i.fecha]]></queryString>
             </valueAxisFormat>
         </barPlot>
     </barChart>
+        <!-- GRÁFICO CIRCULAR (pieChart): Incidencias por Tipo (motivo) -->
+        <pieChart>
+            <chart evaluationTime="Report">
+                <reportElement x="0" y="205" width="555" height="240" uuid="812c51a7-8075-45db-8c94-ad6f8c5cb632"/>
+                <chartTitle>
+                    <titleExpression><![CDATA["Incidencias por Tipo (motivo)"]]></titleExpression>
+                </chartTitle>
+                <chartSubtitle/>
+                <chartLegend position="Right"/>
+            </chart>
+            <pieDataset>
+                <dataset>
+                    <datasetRun subDataset="DatasetIncidenciasMotivo" uuid="ba270727-aa77-4684-bc81-a68dcfa14729">
+                        <connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+                    </datasetRun>
+                </dataset>
+                <keyExpression><![CDATA[$F{motivo}]]></keyExpression>
+                <valueExpression><![CDATA[$F{cantidad}]]></valueExpression>
+            </pieDataset>
+            <piePlot labelFormat="{0}: {1} ({2})" legendLabelFormat="{0}" isShowLabels="true" isCircular="true">
+                <plot/>
+                <itemLabel/>
+            </piePlot>
+        </pieChart>
+
 </band></summary>
 <noData><band height="100"><rectangle><reportElement mode="Opaque" x="0" y="0" width="555" height="62" forecolor="#1F4E79" backcolor="#1F4E79" uuid="aecf7085-a300-40c6-8413-3cdcbdd1daa1"/></rectangle><staticText><reportElement x="10" y="4" width="535" height="16" forecolor="#C8DCF0" uuid="7b00db3c-22f6-40fb-a545-ad8551137d15"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="9" isBold="false"/></textElement><text><![CDATA[LogiRuta Perú S.A.C. · Plataforma de logística y seguimiento]]></text></staticText><staticText><reportElement x="10" y="20" width="535" height="24" forecolor="#FFFFFF" uuid="f44ae5a6-ea0c-49c4-b94e-5bd9fb44fecf"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="17" isBold="true"/></textElement><text><![CDATA[INCIDENCIAS POR ZONA]]></text></staticText><staticText><reportElement x="0" y="72" width="555" height="20" forecolor="#999999" uuid="d3a34ef0-0688-45c2-9c4a-0154894249b4"/><box leftPadding="3" rightPadding="3"/><textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="SansSerif" size="11" isBold="false"/></textElement><text><![CDATA[No hay datos para mostrar con los filtros elegidos.]]></text></staticText></band></noData>
 </jasperReport>

@@ -1,5 +1,10 @@
 # Diagramas UML – AppLogistica (código Mermaid) – Avance 2 (Capítulos I al VI, actualizado semana 13)
 
+> **Versión final:** los diagramas nuevos de los capítulos VIII y IX están en PlantUML en la carpeta `diagramas/`:
+> `arquitectura_capas.puml`, `clases_general.puml`, `secuencia_login_bloqueo.puml`, `secuencia_boleta_pago.puml`,
+> `grasp_login_seguridad.puml` y `base_datos.puml` (con `bloqueos_login` e `intentos_login`).
+
+
 > Las versiones PlantUML (formato del proyecto del docente) de la base de datos, la arquitectura, el Bridge con JasperReports y las Sesiones 13, 14 y 17 están en la carpeta [`../diagramas`](../diagramas).
 
 Cada bloque puede pegarse en https://mermaid.live o en cualquier editor compatible con Mermaid para regenerar la imagen.

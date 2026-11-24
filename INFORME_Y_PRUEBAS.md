@@ -1,4 +1,42 @@
-# Informe de cambios y pruebas – actualización de las semanas 14 y 17
+# Informe de cambios y pruebas – versión final (Capítulos I al XII)
+
+## Cambios de esta versión
+
+- **Gráficos circulares (pieChart)** en cuatro reportes JasperReports, además de los de barras: envíos por estado
+  (`listadoEnvios.jrxml`), incidencias por tipo (`incidenciasZona.jrxml`), empleados por área
+  (`listaEmpleados.jrxml`) y entregas a tiempo frente a fuera de plazo (`cumplimientoTiempos.jrxml`). Cada uno usa un
+  `subDataset` con consulta `GROUP BY` (JasperReports no admite claves repetidas en un gráfico circular).
+- **Seguridad del login:** 3 contraseñas incorrectas seguidas bloquean la cuenta 5 minutos; se muestran los intentos
+  restantes; el ingreso correcto reinicia el contador; el administrador desbloquea en *Utilitarios › Desbloquear
+  usuarios*. Clases nuevas: `ControlAccesoLogin`, `IRegistroIntentosLogin`, `BloqueoLoginDao`,
+  `BloqueoLoginDaoMemoria`, `BloqueoLoginTo`, `CuentaBloqueadaException`, `ParametrosSeguridad` y
+  `DesbloqueoUsuariosView`. Cambios en `EmpleadoController`, `LoginView` y `PrincipalView`.
+- **GRASP completo (Cap. VIII):** Creador, Controlador, Bajo acoplamiento y Alta cohesión explicados con la boleta de
+  pago y con la seguridad del login (diagrama `diagramas/grasp_login_seguridad.puml`).
+- **Base de datos:** tablas `bloqueos_login` e `intentos_login`, procedimiento `sp_Login_Desbloquear` y el script
+  `sql/04_actualizacion_seguridad_login.sql` para bases existentes (el 01 ya lo incluye).
+- **Informe final:** `docs/Informe_AppLogistica_Final_Cap_I-XII.docx/.pdf` (171 páginas): Cap. VIII completo; Cap. IX con
+  diagrama de capas, diagrama de clases general, dos diagramas de secuencia, modelo lógico y diccionario de datos;
+  Cap. X con 26 casos de prueba funcionales y evidencias; Cap. XI (6 conclusiones) y Cap. XII (recomendaciones);
+  Anexo B (uso por rol).
+- **README:** tabla de avance **por semana** (1 a 18) y resumen de los 7 patrones GRASP.
+
+## Pruebas de esta versión
+
+- Compilación con `javac --release 11` (JDK 21): correcta.
+- `01_instalacion_inicial.sql` desde cero: correcto. `04_actualizacion_seguridad_login.sql` sobre la base anterior y
+  ejecutado dos veces: correcto.
+- `PruebaGrasp` sección *seguridad_login* (sin MySQL, reloj simulado): fallos 1 y 2 → quedan 2 y 1; fallo 3 →
+  bloqueada 300 s; clave correcta durante el bloqueo → rechazada; 6 minutos después → ingresa; desbloqueo del
+  administrador → ingresa.
+- Con MySQL (`EmpleadoController`): mismo comportamiento; `bloqueos_login` e `intentos_login` registran cada paso.
+- Los cuatro reportes con gráfico circular se exportaron a PDF (`docs/reportes_ejemplo`) y se revisaron.
+- Regresión: `PruebaPatrones` completa sin errores (`docs/salida_pruebas.txt`).
+- Capturas 38 a 45: intentos restantes, cuenta bloqueada, menú y ventana de desbloqueo, y los cuatro gráficos circulares.
+
+---
+
+# Versión anterior – actualización de las semanas 14 y 17
 
 ## Cambios de esta versión
 

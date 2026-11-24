@@ -1,0 +1,62 @@
+@startuml grasp_login_seguridad
+skinparam classAttributeIconSize 0
+skinparam defaultFontSize 11
+skinparam class {
+  BackgroundColor #F3F7FB
+  BorderColor #1F4E79
+}
+title Seguridad del login: Creador, Controlador, Bajo acoplamiento y Alta cohesión
+
+class LoginView <<Presentación>> {
+  -btnaceptarActionPerformed()
+}
+class DesbloqueoUsuariosView <<Presentación>> {
+  -cargar()
+  -desbloquear()
+}
+class EmpleadoController <<Controlador>> {
+  +EmpleadoValidar(usuario, clave) : boolean
+  +bloqueosListar() : List<BloqueoLoginTo>
+  +usuarioDesbloquear(usuario)
+}
+class ControlAccesoLogin <<Experto / Creador>> {
+  -registro : IRegistroIntentosLogin
+  -reloj : Clock
+  +verificarNoBloqueado(usuario)
+  +registrarFallo(usuario) : int
+  +registrarExito(usuario)
+  +desbloquear(usuario)
+}
+interface IRegistroIntentosLogin <<Bajo acoplamiento>> {
+  +buscar(usuario) : BloqueoLoginTo
+  +guardar(estado)
+  +registrarIntento(usuario, exitoso, detalle)
+  +listarConFallos() : List
+  +desbloquear(usuario)
+}
+class BloqueoLoginDao <<Fabricación pura>>
+class BloqueoLoginDaoMemoria <<Pruebas>>
+class BloqueoLoginTo <<Experto>> {
+  -intentosFallidos : int
+  -bloqueadoHasta : LocalDateTime
+  +estaBloqueado(ahora) : boolean
+}
+class ParametrosSeguridad <<Alta cohesión>> {
+  +MAX_INTENTOS = 3
+  +MINUTOS_BLOQUEO = 5
+}
+class CuentaBloqueadaException
+class EmpleadoDao
+
+LoginView --> EmpleadoController : delega
+DesbloqueoUsuariosView --> EmpleadoController : delega
+EmpleadoController --> ControlAccesoLogin
+EmpleadoController --> EmpleadoDao : validar clave
+ControlAccesoLogin --> IRegistroIntentosLogin
+ControlAccesoLogin ..> BloqueoLoginTo : <<crea>>
+ControlAccesoLogin ..> CuentaBloqueadaException : <<lanza>>
+ControlAccesoLogin ..> ParametrosSeguridad
+IRegistroIntentosLogin <|.. BloqueoLoginDao
+IRegistroIntentosLogin <|.. BloqueoLoginDaoMemoria
+note bottom of BloqueoLoginDao : tablas bloqueos_login e intentos_login\n+ sp_Login_Desbloquear
+@enduml

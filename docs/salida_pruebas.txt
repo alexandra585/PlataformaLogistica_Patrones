@@ -62,8 +62,8 @@ Prototipo intacto: destino=- | ¿destino compartido con clon? false
   CORREO con destinatario inválido -> enviado=false
 
 ##SECCION facade
-   [WA-API] +51976543210 template=estado_envio body="LogiRuta LR00000001 - Su envio fue registrado. Llegada estimada: 2026-11-14"
-Resultado: LR00000001 | Servicio EXPRESS (2.5 kg) + Seguro + Firma digital | S/ 39.25 | ETA 2026-11-14
+   [WA-API] +51976543210 template=estado_envio body="LogiRuta LR00000001 - Su envio fue registrado. Llegada estimada: 2026-11-25"
+Resultado: LR00000001 | Servicio EXPRESS (2.5 kg) + Seguro + Firma digital | S/ 39.25 | ETA 2026-11-25
 Destino geolocalizado: (-12.04150, -77.00150)
 
 ##SECCION decorator
@@ -108,8 +108,11 @@ Consulta de tracking (2 veces):
    EN_RUTA      | Barranco               | Actualización desde app móvil
 
 ##SECCION bridge
+Nov 24, 2026 12:26:07 PM net.sf.jasperreports.engine.query.JRJdbcQueryExecuter <init>
    PDF generado (1 pág.): salida_reportes/incidencias_zona.pdf
+Nov 24, 2026 12:26:07 PM net.sf.jasperreports.engine.query.JRJdbcQueryExecuter <init>
    Salida de prueba: 'Incidencias por zona' con 1 página(s)
+Nov 24, 2026 12:26:07 PM net.sf.jasperreports.engine.query.JRJdbcQueryExecuter <init>
    PDF generado (1 pág.): salida_reportes/cumplimiento_tiempos.pdf
 
 ##SECCION observer
@@ -135,7 +138,7 @@ Historial registrado por HistorialSeguimientoObserver:
 Alertas generadas por AlertaSupervisorObserver: [[CRITICA] LR00000001 - Envío EXPRESS observado: riesgo de incumplir 24 h. AUSENCIA_DESTINATARIO: Nadie en domicilio]
 Indicadores: Sesión: 0 entregados | 1 en ruta | 1 observados | 0 devueltos | 0 reversiones
 Se desuscribe la pantalla y se reprograma (la pantalla ya no imprime):
-   [WA-API] +51934555666 template=estado_envio body="LogiRuta LR00000001 - Entrega reprogramada para el 2026-11-14."
+   [WA-API] +51934555666 template=estado_envio body="LogiRuta LR00000001 - Entrega reprogramada para el 2026-11-25."
 Estado final: REPROGRAMADO (paso 2, intentos 1)
 
 ##SECCION state
@@ -160,11 +163,11 @@ Tres intentos fallidos de entrega (LR00000002):
    [WA-API] +51934111222 template=estado_envio body="LogiRuta LR00000002 - Su paquete está en ruta y llegará hoy."
    [WA-API] +51934111222 template=estado_envio body="LogiRuta LR00000002 - No pudimos entregar su paquete (intento 1). Lo contactaremos para coordinar."
    Incidencia 1 -> OBSERVADO (paso 2, intentos 1) permite [REPROGRAMAR, DEVOLVER]
-   [WA-API] +51934111222 template=estado_envio body="LogiRuta LR00000002 - Entrega reprogramada para el 2026-11-14."
+   [WA-API] +51934111222 template=estado_envio body="LogiRuta LR00000002 - Entrega reprogramada para el 2026-11-25."
    [WA-API] +51934111222 template=estado_envio body="LogiRuta LR00000002 - Su paquete está en ruta y llegará hoy."
    [WA-API] +51934111222 template=estado_envio body="LogiRuta LR00000002 - No pudimos entregar su paquete (intento 2). Lo contactaremos para coordinar."
    Incidencia 2 -> OBSERVADO (paso 2, intentos 2) permite [REPROGRAMAR, DEVOLVER]
-   [WA-API] +51934111222 template=estado_envio body="LogiRuta LR00000002 - Entrega reprogramada para el 2026-11-15."
+   [WA-API] +51934111222 template=estado_envio body="LogiRuta LR00000002 - Entrega reprogramada para el 2026-11-26."
    [WA-API] +51934111222 template=estado_envio body="LogiRuta LR00000002 - Su paquete está en ruta y llegará hoy."
    [WA-API] +51934111222 template=estado_envio body="LogiRuta LR00000002 - No pudimos entregar su paquete (intento 3). Lo contactaremos para coordinar."
    Incidencia 3 -> OBSERVADO (paso 2, intentos 3) permite [DEVOLVER]
@@ -215,9 +218,9 @@ Macro-comando: despachar manifiesto de 3 envíos (uno inválido):
    [WA-API] +51999888777 template=estado_envio body="LogiRuta LR00000001 - Su paquete está en ruta y llegará hoy."
    [WA-API] +51999888777 template=estado_envio body="LogiRuta LR00000001 - No pudimos entregar su paquete (intento 1). Lo contactaremos para coordinar."
 Estado actual: OBSERVADO (paso 4, intentos 1)
-Caretaker guarda: 23:25:57 | Antes de reprogramar | volver a OBSERVADO
-   [WA-API] +51999888777 template=estado_envio body="LogiRuta LR00000001 - Entrega reprogramada para el 2026-11-15."
-Tras reprogramar: REPROGRAMADO (paso 4, intentos 1) fechaProgramada=2026-11-15
+Caretaker guarda: 12:26:07 | Antes de reprogramar | volver a OBSERVADO
+   [WA-API] +51999888777 template=estado_envio body="LogiRuta LR00000001 - Entrega reprogramada para el 2026-11-26."
+Tras reprogramar: REPROGRAMADO (paso 4, intentos 1) fechaProgramada=2026-11-26
 El cliente cancela la reprogramación -> restaurar último memento
    [WA-API] +51999888777 template=estado_envio body="LogiRuta LR00000001 - Corregimos el estado de su envío: OBSERVADO"
 Restaurado: OBSERVADO (paso 4, intentos 1) fechaProgramada=null
@@ -268,13 +271,13 @@ Reincorporar:
    Deshacer 4 -> Empleado: E0099 - Roy Saavedra | Área: ALMACEN | Sueldo: S/ 3000.00
    Sin más estados: true
 -- Bitácora del Invoker --
-   23:25:57  [Mostrar datos]  Empleado: E0099 - Roy Saavedra | Área: ALMACEN | Sueldo: S/ 3000.00
-   23:25:57  [Calcular bono]  Bono calculado (10 %): S/ 300.00
-   23:25:57  [Calcular sueldo final]  Sueldo final: S/ 3300.00
-   23:25:57  [Aumentar sueldo 10.0 %]  Sueldo aumentado 10.0 %: S/ 3000.00 -> S/ 3300.00
-   23:25:57  [Calcular sueldo final]  Sueldo final: S/ 3630.00
-   23:25:57  [Cambiar área a Supervision]  Área cambiada: ALMACEN -> SUPERVISION
-   23:25:57  [Aumentar sueldo 20.0 %]  Sueldo aumentado 20.0 %: S/ 3300.00 -> S/ 3960.00
+   12:26:07  [Mostrar datos]  Empleado: E0099 - Roy Saavedra | Área: ALMACEN | Sueldo: S/ 3000.00
+   12:26:07  [Calcular bono]  Bono calculado (10 %): S/ 300.00
+   12:26:07  [Calcular sueldo final]  Sueldo final: S/ 3300.00
+   12:26:07  [Aumentar sueldo 10.0 %]  Sueldo aumentado 10.0 %: S/ 3000.00 -> S/ 3300.00
+   12:26:07  [Calcular sueldo final]  Sueldo final: S/ 3630.00
+   12:26:07  [Cambiar área a Supervision]  Área cambiada: ALMACEN -> SUPERVISION
+   12:26:07  [Aumentar sueldo 20.0 %]  Sueldo aumentado 20.0 %: S/ 3300.00 -> S/ 3960.00
 -- Registros enviados a la BD (historial_remuneracion) --
    E0099 AUMENTO -> S/ 3300.00, ALMACEN
    E0099 CAMBIO_AREA -> S/ 3300.00, SUPERVISION
@@ -328,3 +331,26 @@ Sueldo neto: 2254.1666666666665
    empleados.regimen_pensionario <- E0010 = SNP
    boletas_pago <- E0010 2026-12 neto S/ 1456.00 (por E0001)
    PDF generado (1 pág.): salida_reportes/boleta_pago.pdf
+
+##SECCION seguridad_login
+   -> le quedan 2 intento(s)
+   Intento 1 con clave incorrecta: OK
+   -> le quedan 1 intento(s)
+   Intento 2 con clave incorrecta: OK
+   Intento 3 con clave incorrecta: RECHAZADO -> La cuenta está bloqueada por 3 intentos fallidos.
+Intente nuevamente en 5 minuto(s) o pida al administrador que la desbloquee.
+   Intento 4 con la clave CORRECTA (dentro de los 5 min): RECHAZADO -> La cuenta está bloqueada por 3 intentos fallidos.
+Intente nuevamente en 5 minuto(s) o pida al administrador que la desbloquee.
+   6 minutos después, clave correcta: OK
+   jtorres bloqueado tras 3 fallos (300 s)
+   jtorres tras el desbloqueo del ADMINISTRADOR: OK
+   Bitácora (intentos_login):
+     rquispe | FALLO | CLAVE INCORRECTA
+     rquispe | FALLO | CLAVE INCORRECTA
+     rquispe | FALLO | CUENTA BLOQUEADA (3 INTENTOS FALLIDOS)
+     rquispe | FALLO | INTENTO CON CUENTA BLOQUEADA
+     rquispe | OK | INGRESO CORRECTO
+     jtorres | FALLO | CLAVE INCORRECTA
+     jtorres | FALLO | CLAVE INCORRECTA
+     jtorres | FALLO | CUENTA BLOQUEADA (3 INTENTOS FALLIDOS)
+     jtorres | FALLO | DESBLOQUEADO POR ADMINISTRADOR

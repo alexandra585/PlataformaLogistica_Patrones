@@ -111,7 +111,14 @@ public class LoginView extends JFrame {
             } else {
                 JOptionPane.showMessageDialog(this, "Acceso denegado...", "Login", JOptionPane.WARNING_MESSAGE);
             }
+        } catch (uni.service.CuentaBloqueadaException ex) {
+            // Seguridad: 3 contraseñas incorrectas seguidas bloquean la cuenta 5 minutos
+            txtpassword.setText("");
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Cuenta bloqueada",
+                    JOptionPane.ERROR_MESSAGE);
         } catch (SecurityException ex) {
+            txtpassword.setText("");
+            txtpassword.requestFocus();
             JOptionPane.showMessageDialog(this, "Acceso denegado: " + ex.getMessage(), "Login",
                     JOptionPane.WARNING_MESSAGE);
         } catch (Exception ex) {

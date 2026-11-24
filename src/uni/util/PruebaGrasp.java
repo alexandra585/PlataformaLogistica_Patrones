@@ -20,12 +20,14 @@ import uni.service.IRegistroBoleta;
  * Pruebas por consola de las Sesiones 14 y 17 (no requieren MySQL).
  *  - antipatrones: caso Empleado de la clase, antes y después de refactorizar.
  *  - grasp: Experto en información, Polimorfismo y Fabricación pura.
+ *  - seguridadLogin: bloqueo de la cuenta tras 3 contraseñas incorrectas (reloj simulado).
  */
 public class PruebaGrasp {
 
     public static void main(String[] args) throws Exception {
         antipatrones();
         grasp();
+        seguridadLogin();
     }
 
     private static void seccion(String nombre) {
@@ -124,6 +126,45 @@ public class PruebaGrasp {
         filas.add(f);
         System.out.println("   " + new ReporteBoletaPago(new SalidaArchivoPdf(
                 new File("salida_reportes", "boleta_pago.pdf")), 1).generar(new JRMapCollectionDataSource(filas)));
+    }
+
+    /** Seguridad del login: 3 fallos bloquean 5 minutos; el reloj se simula (Clock inyectado). */
+    static void seguridadLogin() throws Exception {
+        seccion("seguridad_login");
+        uni.dao.BloqueoLoginDaoMemoria reg = new uni.dao.BloqueoLoginDaoMemoria();
+        java.time.Instant t0 = java.time.Instant.parse("2026-11-24T15:00:00Z");
+        java.time.ZoneId lima = java.time.ZoneId.of("America/Lima");
+        uni.service.ControlAccesoLogin c = new uni.service.ControlAccesoLogin(reg, java.time.Clock.fixed(t0, lima));
+        for (int i = 1; i <= 3; i++) {
+            final int n = i;
+            intentar("   Intento " + n + " con clave incorrecta", () -> {
+                c.verificarNoBloqueado("rquispe");
+                int quedan = c.registrarFallo("rquispe");
+                System.out.println("   -> le quedan " + quedan + " intento(s)");
+            });
+        }
+        intentar("   Intento 4 con la clave CORRECTA (dentro de los 5 min)", () -> c.verificarNoBloqueado("rquispe"));
+
+        uni.service.ControlAccesoLogin c6 = new uni.service.ControlAccesoLogin(reg,
+                java.time.Clock.fixed(t0.plusSeconds(6 * 60), lima));
+        intentar("   6 minutos después, clave correcta", () -> {
+            c6.verificarNoBloqueado("rquispe");
+            c6.registrarExito("rquispe");
+        });
+
+        for (int i = 0; i < 3; i++) {
+            try {
+                c6.registrarFallo("jtorres");
+            } catch (uni.service.CuentaBloqueadaException ex) {
+                System.out.println("   jtorres bloqueado tras 3 fallos (" + ex.getSegundosRestantes() + " s)");
+            }
+        }
+        c6.desbloquear("jtorres");
+        intentar("   jtorres tras el desbloqueo del ADMINISTRADOR", () -> c6.verificarNoBloqueado("jtorres"));
+        System.out.println("   Bitácora (intentos_login):");
+        for (String linea : reg.getBitacora()) {
+            System.out.println("     " + linea);
+        }
     }
 
     private static EmpleadoNomina nomina(String id, String nombre, String apellidos, String area, double sueldo,

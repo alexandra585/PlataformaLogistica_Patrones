@@ -76,6 +76,7 @@ public class PruebaPatrones {
         PruebaComportamiento.nominaSesion13();
         PruebaGrasp.antipatrones();
         PruebaGrasp.grasp();
+        PruebaGrasp.seguridadLogin();
     }
 
     private static void seccion(String nombre) {

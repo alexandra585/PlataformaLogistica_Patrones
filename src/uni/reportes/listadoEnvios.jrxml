@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="listadoEnvios" language="java" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="7b2e3c4d-5f6a-7b8c-9d0e-1f2a3b4c5d6e">
     
+    <subDataset name="DatasetEnviosEstado" uuid="c4aa1278-9cbd-4e22-9fbd-ee3126c31e2b">
+        <queryString language="SQL"><![CDATA[SELECT e.estado, COUNT(*) AS cantidad FROM envios e GROUP BY e.estado
+ORDER BY FIELD(e.estado,'REGISTRADO','RECOGIDO','EN_TRANSITO','CLASIFICADO','EN_RUTA','OBSERVADO','REPROGRAMADO','ENTREGADO','DEVUELTO')]]></queryString>
+        <field name="estado" class="java.lang.String"/>
+        <field name="cantidad" class="java.lang.Long"/>
+    </subDataset>
     <parameter name="P_ESTADO" class="java.lang.String">
         <parameterDescription><![CDATA[Estado a filtrar; null = todos]]></parameterDescription>
     </parameter>
@@ -319,7 +325,7 @@ ORDER BY FIELD(e.estado,'REGISTRADO','RECOGIDO','EN_TRANSITO','CLASIFICADO','EN_
     </pageFooter>
 
     <summary>
-        <band height="220" splitType="Stretch">
+        <band height="470" splitType="Stretch">
             <line>
                 <reportElement x="0" y="4" width="802" height="1" forecolor="#1F4E79" uuid="b5d80b4f-cc99-4425-800a-ab52ece7f18c"/>
                 <graphicElement>
@@ -356,6 +362,33 @@ ORDER BY FIELD(e.estado,'REGISTRADO','RECOGIDO','EN_TRANSITO','CLASIFICADO','EN_
                     </valueAxisFormat>
                 </barPlot>
             </barChart>
+        <!-- GRÁFICO CIRCULAR (pieChart): Distribución de Envíos por Estado (%) -->
+        <pieChart>
+            <chart evaluationTime="Report">
+                <reportElement x="151" y="225" width="500" height="240" uuid="b0c469d2-e0bd-4324-9c14-f1dacbe24bb8">
+                        <printWhenExpression><![CDATA[$P{P_ESTADO} == null || $P{P_ESTADO}.toString().isEmpty()]]></printWhenExpression>
+                    </reportElement>
+                <chartTitle>
+                    <titleExpression><![CDATA["Distribución de Envíos por Estado (%)"]]></titleExpression>
+                </chartTitle>
+                <chartSubtitle/>
+                <chartLegend position="Right"/>
+            </chart>
+            <pieDataset>
+                <dataset>
+                    <datasetRun subDataset="DatasetEnviosEstado" uuid="60d30c75-77fa-436e-8157-c5ab9e70012f">
+                        <connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+                    </datasetRun>
+                </dataset>
+                <keyExpression><![CDATA[$F{estado}]]></keyExpression>
+                <valueExpression><![CDATA[$F{cantidad}]]></valueExpression>
+            </pieDataset>
+            <piePlot labelFormat="{0}: {1} ({2})" legendLabelFormat="{0}" isShowLabels="true" isCircular="true">
+                <plot/>
+                <itemLabel/>
+            </piePlot>
+        </pieChart>
+
         </band>
     </summary>
 

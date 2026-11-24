@@ -272,6 +272,21 @@ sucursales ||--o{ zonas : idsucursal
 sucursales ||--o{ empleados : idsucursal
 zonas ||--o{ rutas : idzona
 vehiculos ||--o{ rutas : placa
+entity bloqueos_login {
+  * usuario : VARCHAR(50) <<PK>>
+  --
+  intentos_fallidos : TINYINT
+  bloqueado_hasta : DATETIME
+  ultimo_fallo : DATETIME
+}
+entity intentos_login {
+  * idintento : BIGINT <<PK>>
+  --
+  usuario : VARCHAR(50)
+  exitoso : TINYINT(1)
+  detalle : VARCHAR(80)
+  fecha : DATETIME
+}
 empleados ||--o{ rutas : idsupervisor
 clientes ||--o{ envios : idcliente
 tipos_servicio ||--o{ envios : idservicio
@@ -302,4 +317,6 @@ empleados ||--o{ comandos_log : idempleado
 empleados ||--o{ historial_laboral : idempleado
 empleados ||--o{ historial_remuneracion : idempleado
 empleados ||--o{ boletas_pago : idempleado
+empleados .. bloqueos_login : usuario (lógica)
+bloqueos_login .. intentos_login : usuario (lógica)
 @enduml

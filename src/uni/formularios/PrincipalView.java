@@ -132,6 +132,8 @@ public class PrincipalView extends JFrame {
         JMenu utilitarios = new JMenu("Utilitarios");
         utilitarios.add(item("Alertas, notificaciones y bitácora", "Information.png",
                 () -> abrir(new AlertasView()), RolUsuario.ADMINISTRADOR, RolUsuario.SUPERVISOR_RUTA));
+        utilitarios.add(item("Desbloquear usuarios (seguridad del login)", "User.png",
+                () -> abrir(new DesbloqueoUsuariosView()), RolUsuario.ADMINISTRADOR));
         menuBar.add(utilitarios);
 
         JMenu ayuda = new JMenu("Ayuda");

@@ -1,0 +1,32 @@
+@startuml secuencia_boleta_pago
+skinparam defaultFontSize 11
+skinparam sequenceMessageAlign center
+title Secuencia: emisión de la boleta de pago (GRASP)
+
+actor Administrador
+participant BoletaPagoView
+participant EmpleadoController
+participant GeneradorBoleta
+participant EmpleadoNomina
+participant "DescuentoStrategy\n(AFP / SNP)" as D
+participant BoletaDao
+participant ReporteBoletaPago
+database MySQL
+
+Administrador -> BoletaPagoView : empleado, periodo, horas, régimen\n[Emitir boleta]
+BoletaPagoView -> EmpleadoController : nominaCrear(id)
+EmpleadoController --> BoletaPagoView : EmpleadoNomina
+BoletaPagoView -> GeneradorBoleta : emitir(empleado, periodo, horas, usuario)
+GeneradorBoleta -> GeneradorBoleta : calcular() crea BoletaPagoTo (Creador)
+GeneradorBoleta -> EmpleadoNomina : calcularMontoHorasExtras(horas) (Experto)
+GeneradorBoleta -> EmpleadoNomina : calcularAportePension()
+EmpleadoNomina -> D : calcularDescuento(sueldo) (Polimorfismo)
+GeneradorBoleta -> EmpleadoNomina : calcularSueldoNeto(horas)
+GeneradorBoleta -> BoletaDao : cambiarRegimen() / registrar() (Fabricación pura)
+BoletaDao -> MySQL : sp_Boleta_Registrar
+BoletaDao --> GeneradorBoleta : idboleta
+BoletaPagoView -> GeneradorBoleta : imprimir(boleta, salida)
+GeneradorBoleta -> ReporteBoletaPago : generar() (Bridge)
+ReporteBoletaPago -> MySQL : boletaPago.jrxml
+ReporteBoletaPago --> Administrador : PDF / visor JasperReports
+@enduml

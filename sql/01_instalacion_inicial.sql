@@ -13,6 +13,8 @@
 --   + manifiesto de ejemplo MF-2026-0458 para el reporte JasperReports
 -- Actualización Sesiones 14 y 17:
 --   + empleados.regimen_pensionario (AFP/SNP) y tabla boletas_pago (GRASP: Experto, Fabricación pura, Polimorfismo)
+-- Actualización final (gráficos circulares y seguridad del login):
+--   + tablas bloqueos_login e intentos_login y sp_Login_Desbloquear (bloqueo tras 3 intentos fallidos)
 -- Ejecutar completo en MySQL Workbench (Ctrl+Shift+Enter) o con:
 --   mysql -u root -p < sql/01_instalacion_inicial.sql
 -- =====================================================
@@ -42,6 +44,8 @@ FLUSH PRIVILEGES;
 
 SET FOREIGN_KEY_CHECKS = 0;
 
+DROP TABLE IF EXISTS intentos_login;
+DROP TABLE IF EXISTS bloqueos_login;
 DROP TABLE IF EXISTS boletas_pago;
 DROP TABLE IF EXISTS historial_remuneracion;
 DROP TABLE IF EXISTS historial_laboral;
@@ -475,6 +479,29 @@ CREATE TABLE boletas_pago (
     CONSTRAINT uq_boleta_periodo UNIQUE (idempleado, periodo),
     CONSTRAINT ck_boleta_horas CHECK (horas_extras >= 0),
     CONSTRAINT fk_bol_empleado FOREIGN KEY (idempleado) REFERENCES empleados(idempleado)
+) ENGINE=InnoDB;
+
+-- =====================================================
+-- 17e. SEGURIDAD DEL LOGIN (bloqueo tras 3 intentos fallidos)
+-- ControlAccesoLogin (Experto en información) decide; BloqueoLoginDao
+-- (Fabricación pura) solo guarda. Bloqueo de 5 minutos o hasta que el
+-- administrador desbloquee la cuenta.
+-- =====================================================
+
+CREATE TABLE bloqueos_login (
+    usuario VARCHAR(50) PRIMARY KEY,
+    intentos_fallidos TINYINT NOT NULL DEFAULT 0,
+    bloqueado_hasta DATETIME NULL,
+    ultimo_fallo DATETIME NULL,
+    CONSTRAINT ck_bloqueo_intentos CHECK (intentos_fallidos >= 0)
+) ENGINE=InnoDB;
+
+CREATE TABLE intentos_login (
+    idintento BIGINT PRIMARY KEY AUTO_INCREMENT,
+    usuario VARCHAR(50) NOT NULL,
+    exitoso TINYINT(1) NOT NULL,
+    detalle VARCHAR(80),
+    fecha DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
 -- =====================================================
@@ -931,6 +958,12 @@ BEGIN
     INSERT INTO unidad_detalle (idunidad, codigo) VALUES (p_unidad, p_codigo);
 END$$
 
+CREATE PROCEDURE sp_Login_Desbloquear(IN p_usuario VARCHAR(50))
+BEGIN
+    UPDATE bloqueos_login SET intentos_fallidos = 0, bloqueado_hasta = NULL WHERE usuario = p_usuario;
+    INSERT INTO intentos_login (usuario, exitoso, detalle) VALUES (p_usuario, 0, 'DESBLOQUEADO POR ADMINISTRADOR');
+END$$
+
 CREATE PROCEDURE sp_Asignar_Repartidor(
     IN p_codigo CHAR(10), IN p_idrepartidor CHAR(5), IN p_idruta INT)
 BEGIN
@@ -991,3 +1024,4 @@ SELECT codigo, idservicio, estado, paso_flujo, intentos FROM envios;
 SELECT * FROM vw_incidencias_zona;
 SELECT * FROM vw_cumplimiento_tiempos;
 SELECT idempleado, usuario, rol, estado_laboral, sueldo, area, regimen_pensionario FROM empleados;
+SELECT * FROM bloqueos_login;
