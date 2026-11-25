@@ -268,6 +268,10 @@ Más capturas en [`docs/capturas`](docs/capturas).
 ## Documentación
 
 - Informe final (Cap. I–XII): [`docs/Informe_AppLogistica_Final_Cap_I-XII.pdf`](docs/Informe_AppLogistica_Final_Cap_I-XII.pdf)
+- Exposición final (PowerPoint, con anexo UML): [`docs/exposicion/AppLogistica_Exposicion.pptx`](docs/exposicion/AppLogistica_Exposicion.pptx)
+- Guion de la exposición y banco de preguntas: [`docs/exposicion/AppLogistica_Guion_y_Preguntas.docx`](docs/exposicion/AppLogistica_Guion_y_Preguntas.docx)
+- Video demostrativo de 8 min (todos los módulos): [`docs/exposicion/AppLogistica_demo_8min.mp4`](docs/exposicion/AppLogistica_demo_8min.mp4)
+- Video demostrativo de 5 min (flujo logístico, login y reportes): [`docs/exposicion/AppLogistica_demo_5min.mp4`](docs/exposicion/AppLogistica_demo_5min.mp4)
 - Diagramas PlantUML: [`diagramas/`](diagramas) · Diagramas Mermaid del informe: [`docs/diagramas_uml.md`](docs/diagramas_uml.md)
 
 ---
